@@ -24,6 +24,10 @@ let prizes = [
 
 
 <main>
+    <br>
+    <br>
+    <br>
+
     <container class="container1"> 	        
         {#each prizes as prize (prize.id)}
             {#if (prize.id === 1)}
@@ -42,19 +46,19 @@ let prizes = [
     <div class="container mt-5">
         <div class="row">
         <div class="col-sm-4">
-            <h3>Column 1</h3>
+            <h3>Robotikk</h3>
             <p>Resize this responsive page to see the effect!</p>
             <p>Resize this responsive page to see the effect!..........</p>
             <br>
         </div>
         <div class="col-sm-4">
-            <h3>Column 2</h3>
+            <h3>Automasjon</h3>
             <p>Resize this responsive page to see the effect!</p>
             <p>Resize this responsive page to see the effect!..........</p>
             <br>
         </div>
         <div class="col-sm-4">
-            <h3>Column 3</h3>        
+            <h3>OptiCloud</h3>        
             <p>Resize this responsive page to see the effect!</p>
             <p>Resize this responsive page to see the effect!..........</p>
             <br>

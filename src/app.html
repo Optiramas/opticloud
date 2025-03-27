@@ -19,7 +19,7 @@
 			bg-1: Background color of page
 			bg-2: Background color of top header
 			bg-3:
-			fg-1: color of text in page
+			fg-1: color of text in page in headers
 			fg-2:
 			fg-2:
 			link: color of text in top header
@@ -261,27 +261,116 @@
 				opacity: 1;
 			}
 
-			body.dark {
-				--bg-1: hsl(0, 0%, 18%);
-				--bg-2: hsl(0, 0%, 30%);
+			body.light {
+				--bg-1: hsl(0, 0%, 100%);
+				--bg-2: hsl(0, 0%, 100%);
 				--bg-3: hsl(0, 0%, 40%);
-				--fg-1: hsl(0, 0%, 90%);
+				--fg-1: hsl(0, 0%, 00%);
+				--fg-2: hsl(0, 0%, 70%);
+				--fg-3: hsl(0, 0%, 60%);
+				--link: hsl(206, 96%, 72%);
+				--link-hover: hsl(124, 77%, 55%);				
+				--link-active: hsl(206, 96%, 64%);
+				
+				#logo-icon {
+					max-width: 140px;
+					max-height: 30px;
+					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */
+				}
+				
+				#theme-icon {
+					max-width: 25px;
+					max-height: 25px;
+					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */
+				}
+			}
+
+
+
+			body.dark {
+				--bg-1: hsl(0, 0%, 0%);
+				--bg-2: hsl(0, 0%, 0%);
+				--bg-3: hsl(0, 0%, 40%);
+				--fg-1: hsl(0, 0%, 100%);
 				--fg-2: hsl(0, 0%, 70%);
 				--fg-3: hsl(0, 0%, 60%);
 				--link: hsl(206, 96%, 72%);
 				--link-hover: hsl(206, 96%, 78%);
 				--link-active: hsl(206, 96%, 64%);
+
+				#logo-icon {
+					max-width: 140px;
+					max-height: 30px;									
+					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */
+				}
+
+				#theme-icon {
+					max-width: 25px;
+					max-height: 25px;
+					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */					
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<div style="display: contents">%sveltekit.body%</div>
+		
+		<!-- Top Header -->
+		<header style="position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-2); color: var(--fg-1); padding: 0rem; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+			<div style="display: flex; justify-content: center; align-items: center; max-width: 1200px; margin: 0 auto;">
+				<nav style="display: flex; align-items: center; gap: 2rem;"> 
+					<img id="logo-icon" src="Black logo.png" alt="Day" style="cursor: pointer;">
+					<a href="/" style="text-decoration: none; color: var(--fg-1); font-size: 1.0rem;">HJEM</a>
+					<a href="/about" style="text-decoration: none; color: var(--fg-1); font-size: 1.0rem;">KONTAKT</a>
+					<img id="theme-icon" src="moon.png" alt="Day" style="cursor: pointer;">
+				</nav>
+			</div>
+		</header>
+	
+		<!-- Main Content -->
+		<div style="margin-top: 80px; display: contents;"> <!-- Adjust margin-top to avoid overlap with the fixed header -->
+			%sveltekit.body%
+		</div>
+	
 
+		<!-- Script for changing between day and night -->
 		<script>
-			const theme = new URL(window.location).searchParams.get('theme');
+			// Check for saved theme in localStorage
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme) {
+			  document.body.classList.add(savedTheme);
+			} 
+			else {
+			  document.body.classList.add('light');
+			}
 
-			document.body.classList.remove('light', 'dark');
-			document.body.classList.add(theme || 'light');	
+			// Få tak i bildet ved hjelp av ID
+			const themeIcon = document.getElementById('theme-icon');
+			const logoIcon = document.getElementById('logo-icon');
+
+
+			// Legg til en klikkhendelse på themeIcon bildet
+			themeIcon.addEventListener('click', () => {
+				// Sjekk hvilket bilde som er vist og bytt til det andre
+				if (themeIcon.getAttribute('src') === 'moon.png') {
+					themeIcon.setAttribute('src', 'sun.png');
+					logoIcon.setAttribute('src', 'White logo.png');
+					// Bytt til dark theme (kan inkludere din logikk for dette)
+					document.body.classList.add('dark');
+					document.body.classList.remove('light');
+				} 
+				else {
+					themeIcon.setAttribute('src', 'moon.png');
+					logoIcon.setAttribute('src', 'Black logo.png');
+					// Bytt til light theme (kan inkludere din logikk for dette)
+					document.body.classList.add('light');
+					document.body.classList.remove('dark');
+				}
+			});
+
+			// Add a click event to the logo icon to navigate to the HOME page
+			logoIcon.addEventListener('click', () => {			
+				window.location.href = '/'; // Redirect to the HOME page
+			});
 		</script>
 	</body>
 </html>
