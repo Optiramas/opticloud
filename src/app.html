@@ -29,7 +29,7 @@
 
 		<style>			
 			body {
-				--bg-1: hsl(0, 0%, 100%);
+				--bg-1: hsl(0, 0%, 174%);
 				--bg-2: hsl(0, 0%, 100%);
 				--bg-3: hsl(207, 70%, 44%);
 				--fg-1: hsl(0, 0%, 0%);
@@ -262,8 +262,8 @@
 			}
 
 			body.light {
-				--bg-1: hsl(0, 0%, 100%);
-				--bg-2: hsl(0, 0%, 100%);
+				--bg-1: rgb(164, 168, 167);
+				--bg-2: hwb(0 100% 0%);
 				--bg-3: hsl(0, 0%, 40%);
 				--fg-1: hsl(0, 0%, 00%);
 				--fg-2: hsl(0, 0%, 70%);
@@ -321,7 +321,7 @@
 					<img id="logo-icon" src="Black logo.png" alt="Day" style="cursor: pointer;">
 					<a href="/" style="text-decoration: none; color: var(--fg-1); font-size: 1.0rem;">HJEM</a>
 					<a href="/about" style="text-decoration: none; color: var(--fg-1); font-size: 1.0rem;">KONTAKT</a>
-					<img id="theme-icon" src="moon.png" alt="Day" style="cursor: pointer;">
+					<!-- <img id="theme-icon" src="moon.png" alt="Day" style="cursor: pointer;">  -->
 				</nav>
 			</div>
 		</header>
@@ -344,28 +344,29 @@
 			}
 
 			// Få tak i bildet ved hjelp av ID
-			const themeIcon = document.getElementById('theme-icon');
+			<!-- const themeIcon = document.getElementById('theme-icon'); -->
 			const logoIcon = document.getElementById('logo-icon');
 
 
-			// Legg til en klikkhendelse på themeIcon bildet
-			themeIcon.addEventListener('click', () => {
+			// Legg til en klikkhendelse på themeIcon bildet			
+			//themeIcon.addEventListener('click', () => {
 				// Sjekk hvilket bilde som er vist og bytt til det andre
-				if (themeIcon.getAttribute('src') === 'moon.png') {
-					themeIcon.setAttribute('src', 'sun.png');
-					logoIcon.setAttribute('src', 'White logo.png');
+			//	if (themeIcon.getAttribute('src') === 'moon.png') {
+			//		themeIcon.setAttribute('src', 'sun.png');
+			//		logoIcon.setAttribute('src', 'White logo.png');
 					// Bytt til dark theme (kan inkludere din logikk for dette)
-					document.body.classList.add('dark');
-					document.body.classList.remove('light');
-				} 
-				else {
-					themeIcon.setAttribute('src', 'moon.png');
-					logoIcon.setAttribute('src', 'Black logo.png');
+			//		document.body.classList.add('dark');
+			//		document.body.classList.remove('light');
+			//	} 
+			//	else {
+			//		themeIcon.setAttribute('src', 'moon.png');
+			//		logoIcon.setAttribute('src', 'Black logo.png');
 					// Bytt til light theme (kan inkludere din logikk for dette)
-					document.body.classList.add('light');
-					document.body.classList.remove('dark');
-				}
-			});
+			//		document.body.classList.add('light');
+			//		document.body.classList.remove('dark');
+			//	}
+			//}); 
+			
 
 			// Add a click event to the logo icon to navigate to the HOME page
 			logoIcon.addEventListener('click', () => {			
