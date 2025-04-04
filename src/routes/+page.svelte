@@ -169,12 +169,12 @@
 
     <div class="container mt-5 d-flex justify-content-center align-items-center width-100"> 
         <div class="row">
-            <div class="col-sm-5">
+            <div class="col-sm-6"> 
                 <h3>Robotikk og automasjon</h3>
                 <p>Vår lidenskap er å drive innovasjon, auke kvaliteten og skape varige verdiar for deg og di verksemd. Samarbeid med oss i dag – så sikrar me at framtidas produksjon er både bærekraftig og lønnsam!</p>            
                 <br>
             </div>        
-            <div class="col-sm-5">                                
+            <div class="col-sm-6">                                
                 {#each robots as robot (robot.id)}
                     {#if (robot.id === 1)}
                         <img src="{robot.image}" class="robot-image">
@@ -189,7 +189,7 @@
     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
         <div class="row">
             <!-- Bildet -->
-            <div class="col-sm-5 order-sm-1 order-2">
+            <div class="col-sm-6 order-sm-1 order-2">
                 {#each iots as iot (iot.id)}
                     {#if (iot.id === 1)}
                         <img src="{iot.image}" class="iot-image">
@@ -197,8 +197,8 @@
                 {/each}
             </div>
             <!-- Teksten -->
-            <div class="col-sm-5 order-sm-2 order-1">
-                <h3>Opti IoT</h3>
+            <div class="col-sm-6 order-sm-2 order-1">
+                <h3>OptiCloud & IoT</h3>
                 <p>Fangar opp og analyserer data i sanntid for å ta systemet ditt til neste nivå. Algoritmar identifiserer mulige forbetringar og foreslår presise tiltak. Slik hjelper me deg å optimalisere ressursbruken, auke kvaliteten og skape varige resultat. Ta kontakt i dag, og la Opti IoT føre verksemda di inn i ei ny tid for dataorientert innovasjon!</p>
                 <br>
             </div>
@@ -208,12 +208,12 @@
 
     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
         <div class="row">            
-            <div class="col-sm-5">
+            <div class="col-sm-6">
                 <h3>Konsulent</h3>
                 <p>Me tilbyd konsulent tjenester. Me er dedikerte til eit profesjonelt og tett samarbeid som sikrar løysingar tilpassa nettopp dine</p>            
                 <br>
             </div>            
-            <div class="col-sm-5">
+            <div class="col-sm-6">
                 {#each konsulents as konsulent (konsulent.id)}
                     {#if (konsulent.id === 1)}
                         <img src="{konsulent.image}" class="konsulent-image">
