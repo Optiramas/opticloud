@@ -221,7 +221,7 @@
             </div>
             <!-- Teksten -->
             <div class="col-sm-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center text-container frame">
-                <h3>OptiCloud & IoT</h3>
+                <h3>OptiCloud og OptiIoT</h3>
                 <p>Fangar opp og analyserer data i sanntid for å ta systemet ditt til neste nivå. Algoritmar identifiserer mulige forbetringar og foreslår presise tiltak. Slik hjelper me deg å optimalisere ressursbruken, auke kvaliteten og skape varige resultat. Ta kontakt i dag, og la Opti IoT føre verksemda di inn i ei ny tid for dataorientert innovasjon!</p>
                 <br>
             </div>
@@ -232,7 +232,7 @@
     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
         <div class="row">            
             <div class="col-sm-6 d-flex flex-column justify-content-center align-items-center text-container frame">
-                <h3>Konsulent</h3>
+                <h3>Konsulent og programmerings tjenester</h3>
                 <p>Vi tilbyr konsulent og programmeringstjenester, er dedikerte til et profesjonelt og tett samarbeid som sikrer løsninger tilpasset nettopp dine behov. 
                     Hva kan vi?
                     Vi kjører prosjekt, programmerer pls, hmi, microkontrollere, robot og kan lager web løsninger. Vi snakker flytende en del varianter av c, programmerer html. Noen kjente er Mitsubishi, Siemens, Omron, Wago, Beckhoff samt alle de som kjører på Codesys. På HMI siden, alt fra Beijer, Exor, Deif, Omron, Siemens med flere. Har og erfaring med utvikling av robot løsninger ved bruk av UR, ABB, TM. 
