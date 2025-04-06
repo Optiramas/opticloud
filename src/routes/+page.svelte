@@ -65,7 +65,7 @@
 
     /* Reduser størrelsen på hele seksjonen */
     .container {
-        transform: scale(0.9); /* Skaler ned hele containeren til 90% av originalstørrelsen */
+        transform: scale(1.0); /* Skaler ned hele containeren til 90% av originalstørrelsen */
         transform-origin: center; /* Sørg for at skaleringen skjer fra midten */
     }
 
@@ -82,6 +82,10 @@
         height: auto;                   /* Allow the height to adjust dynamically */
     }
     
+    /* Style for the text container */
+    .text-container {        
+        padding: 0px 50px;       /* 0px topp/bunn, 50px venstre/høyre */
+    }
 
     /* Style for the robot image */
     .robot-image {
@@ -196,7 +200,7 @@
             <!-- Image Section 
             <div class="col-sm-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center text-container frame">
             -->
-            <div class="col-sm-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center text-container frame">
+            <div class="col-sm-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center frame">
                 {#each robots as robot (robot.id)}
                     {#if (robot.id === 1)}
                         <img src="{robot.image}" class="robot-image">
@@ -212,7 +216,7 @@
     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
         <div class="row">
             <!-- Bildet -->        
-            <div class="col-sm-6 order-sm-1 order-2 d-flex flex-column justify-content-center align-items-center text-container frame">
+            <div class="col-sm-6 order-sm-1 order-2 d-flex flex-column justify-content-center align-items-center frame">
                 {#each iots as iot (iot.id)}
                     {#if (iot.id === 1)}
                         <img src="{iot.image}" class="iot-image">
@@ -239,7 +243,7 @@
                     </p>            
                 <br>
             </div>            
-            <div class="col-sm-6 d-flex flex-column justify-content-center align-items-center text-container frame">
+            <div class="col-sm-6 d-flex flex-column justify-content-center align-items-center frame">
                 {#each konsulents as konsulent (konsulent.id)}
                     {#if (konsulent.id === 1)}
                         <img src="{konsulent.image}" class="konsulent-image">
