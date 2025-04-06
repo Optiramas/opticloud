@@ -225,7 +225,7 @@
             </div>
             <!-- Teksten -->
             <div class="col-sm-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center text-container frame">
-                <h3>OptiCloud og OptiIoT</h3>
+                <h3>OptiCloud og Opti-IoT</h3>
                 <p>Fangar opp og analyserer data i sanntid for å ta systemet ditt til neste nivå. Algoritmar identifiserer mulige forbetringar og foreslår presise tiltak. Slik hjelper me deg å optimalisere ressursbruken, auke kvaliteten og skape varige resultat. Ta kontakt i dag, og la Opti IoT føre verksemda di inn i ei ny tid for dataorientert innovasjon!</p>
                 <br>
             </div>
