@@ -1,21 +1,21 @@
-//import adapter from '@sveltejs/adapter-static';
-import adapter from '@sveltejs/adapter-auto';
-//import adapter from '@sveltejs/adapter-vercel';
+// svelte.config.js
+import adapter from '@sveltejs/adapter-vercel';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-/** @type {import('@sveltejs/kit').Config} */
 const config = {
-	kit: {			
-		adapter: adapter(),
-		paths: {
-			base: '',
-			assets: ''
-		},
-	},
-	vite: {
-		define: {
-			'import.meta.env.BASE_URL': JSON.stringify('https://footballskills.no/')
-		}
-	}
+  preprocess: vitePreprocess(),
+
+  kit: {
+    adapter: adapter({
+      runtime: 'nodejs22.x',           // or use the env var if you prefer:
+      // runtime: process.env.VERCEL_RUNTIME || 'nodejs22.x',
+
+      regions: ['iad1'],               // single region – safe on Pro
+      maxDuration: 300,                // seconds – Pro allows up to 900
+      split: false,                    // one function for all routes (simpler)
+      precompress: true,               // gzip + brotli for static files (recommended)
+    })
+  }
 };
 
 export default config;

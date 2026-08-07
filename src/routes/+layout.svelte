@@ -1,9 +1,14 @@
+<script>
+    import { injectAnalytics } from "@vercel/analytics/sveltekit";
+	injectAnalytics();
+</script>
 
 <slot />
 
 
+
 <style>
-nav {
+nav {	
 		display: flex;
 		flex-wrap: wrap;	
 		justify-content: space-between;		

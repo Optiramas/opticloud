@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+		<meta charset="utf-8" />				
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="dark light" />
-		%sveltekit.head%
+		
+		<link rel="icon" type="image/png" href="/Browser.png">
 
+		%sveltekit.head%
+		
+
+		
 		<!--
 		https://www.w3schools.com/css/tryit.asp?filename=tryresponsive_bootstrap
 		Below is bootstrap
@@ -14,6 +18,14 @@
 		<!-- Legg til Bootstrap5 CSS -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	
+		<!-- Bootstrap forklaring
+		 	Bootstrap deler breidda inn i 12 kolonner.
+			Tala (4, 6, 12) seier kor mange av dei 12 elementet skal bruke.
+
+			col-12 (standard / mobil) 			= 12 av 12 kolonner = 100% bredde
+			col-sm-6 (små skjermer / nettbrett) = 6 av 12 kolonner 	= 50% bredde
+			col-md-4 (medium skjermer / laptop) = 4 av 12 kolonner 	= 33.33% bredde	
+		-->
 
 		<!-- 
 			bg-1: Background color of page
@@ -47,8 +59,18 @@
 				color: var(--fg-1);
 				font-family: var(--font);
 				line-height: 1.5;
-				margin: 1rem;
+				margin: 0rem;
 				height: calc(100vh - 2rem);
+			}
+
+			h3 {
+				font-size: 2.0rem;   /* try 0.95rem – 1.2rem */
+				line-height: 1.6;
+			}
+
+			p {
+				font-size: 1.2rem;   /* try 0.95rem – 1.2rem */
+				line-height: 1.6;
 			}
 
 			h1,
@@ -70,7 +92,11 @@
 				margin: 0.5rem 0.1rem;
 			}
 
-			:is(h1, h2, h3, h4, h5, h6, p, label):first-child {
+			:is(h1, h2, h3, h4, h5, h6):first-child {
+				margin-top: 10;
+			}
+
+			:is(p, label):first-child {
 				margin-top: 0;
 			}
 
@@ -273,8 +299,8 @@
 				--link-active: hsl(206, 96%, 64%);
 				
 				#logo-icon {
-					max-width: 140px;
-					max-height: 30px;
+					max-width: 150px;
+					max-height: 50px;
 					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */
 				}
 				
@@ -288,19 +314,19 @@
 
 
 			body.dark {
-				--bg-1: hsl(0, 0%, 0%);
-				--bg-2: hsl(0, 0%, 0%);
+				--bg-1: hsl(0, 0%, 100%);
+				--bg-2: hsl(0, 0%, 100%);
 				--bg-3: hsl(0, 0%, 40%);
-				--fg-1: hsl(0, 0%, 100%);
+				--fg-1: hsl(0, 0%, 00%);
 				--fg-2: hsl(0, 0%, 70%);
 				--fg-3: hsl(0, 0%, 60%);
 				--link: hsl(206, 96%, 72%);
-				--link-hover: hsl(206, 96%, 78%);
+				--link-hover: hsl(124, 77%, 55%);				
 				--link-active: hsl(206, 96%, 64%);
 
 				#logo-icon {
-					max-width: 140px;
-					max-height: 30px;									
+					max-width: 150px;
+					max-height: 50px;									
 					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */
 				}
 
@@ -310,27 +336,188 @@
 					cursor: pointer; /* Sørger for at bildet ser klikkbart ut */					
 				}
 			}
+
+
+
+
+			.top-header {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				background: var(--bg-2);
+				color: var(--fg-1);
+				padding: 0rem;
+				z-index: 1000;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			}
+
+			.top-header-inner {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				max-width: 1920px;
+				margin: 0 auto;
+			}
+
+			.top-nav {
+				display: flex;
+				align-items: center;
+				gap: 3rem;
+			}
+
+			.top-nav a {
+				text-decoration: none;
+				color: var(--fg-1);
+				font-size: 1.1rem;
+			}
+
+			#logo-icon {
+				cursor: pointer;
+				height: 40px;
+			}	
+
+
+
+
+			.bottom-header {
+				width: 100%;
+				background: var(--bg-2);
+				color: var(--fg-1);
+				padding: 1.5rem 1rem;
+				box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+			}
+
+			.bottom-header-inner {
+				max-width: 1920px;
+				margin: 0 auto;
+				display: flex;
+				justify-content: center;
+			}
+
+			.bottom-nav {
+				display: flex;
+				gap: 3rem;
+				align-items: flex-start;
+				flex-wrap: wrap; /* key for tablet */
+			}
+
+			.footer-block {
+				min-width: 220px;
+				line-height: 1.6;
+				font-size: 0.95rem;
+			}
+
+
+
+			
+			@media (max-width: 992px) {
+				.top-nav {
+					gap: 1.5rem;
+				}
+
+				.top-nav a {
+					font-size: 1rem;
+				}
+
+				#logo-icon {
+					height: 32px;
+				}
+
+				
+				.bottom-nav {
+					gap: 2rem;
+					justify-content: center;
+				}
+
+				.footer-block {
+					min-width: 200px;
+					text-align: center;
+				}
+			}
+
+			@media (max-width: 576px) {
+				.top-nav {
+					gap: 1rem;
+				}
+
+				.top-nav a {
+					font-size: 0.9rem;
+				}
+
+				#logo-icon {
+					height: 20px;
+				}
+
+				
+				 .bottom-nav {
+					flex-direction: column;
+					align-items: center;
+					gap: 1.5rem;
+				}
+
+				.footer-block {
+					text-align: center;
+					font-size: 0.9rem;
+				}
+			}
+
+
+			
 		</style>
 	</head>
 	<body>
 		
+		
+
 		<!-- Top Header -->
-		<header style="position: fixed; top: 0; left: 0; width: 100%; background: var(--bg-2); color: var(--fg-1); padding: 0rem; z-index: 1000; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-			<div style="display: flex; justify-content: center; align-items: center; max-width: 1200px; margin: 0 auto;">
-				<nav style="display: flex; align-items: center; gap: 2rem;"> 
-					<img id="logo-icon" src="Black logo.png" alt="Day" style="cursor: pointer;">
-					<a href="/" style="text-decoration: none; color: var(--fg-1); font-size: 1.0rem;">HJEM</a>
-					<a href="/about" style="text-decoration: none; color: var(--fg-1); font-size: 1.0rem;">OM OSS</a>
-					<!-- <img id="theme-icon" src="moon.png" alt="Day" style="cursor: pointer;">  -->
+		<header class="top-header">
+			<div class="top-header-inner">
+				<nav class="top-nav">
+					<img id="logo-icon" src="Black logo.png" alt="Logo">
+					<a href="/">HJEM</a>
+					<a href="/news">NYHETER</a>
+					<a href="/about">OM OSS</a>
 				</nav>
 			</div>
 		</header>
-	
+
+
 		<!-- Main Content -->
 		<div style="margin-top: 80px; display: contents;"> <!-- Adjust margin-top to avoid overlap with the fixed header -->
 			%sveltekit.body%
 		</div>
 	
+
+		<!-- Bottom Header -->
+		<footer class="bottom-header">
+			<div class="bottom-header-inner">
+				<nav class="bottom-nav">
+
+					<div class="footer-block">
+						<strong>Sveinung Mæland</strong><br>
+						Mobil: 909 46 768<br>
+						E-post: sm@optiram.no
+					</div>
+
+					<div class="footer-block">
+						<strong>Stian S. Alvsvåg</strong><br>
+						Mobil: 905 72 687<br>
+						E-post: ssa@optiram.no
+					</div>
+
+					<div class="footer-block">
+						<strong>Optiram AS</strong><br>
+						Austbøvegen 44<br>
+						5420 Rubbestadneset, Norge
+					</div>
+
+				</nav>
+			</div>
+		</footer>
+
+
+
 
 		<!-- Script for changing between day and night -->
 		<script>
