@@ -1,4 +1,5 @@
 <script>
+    import { t } from '$lib/i18n';
 
     let optirambildes = [                      
         { id: 1, image: '/Black logo.png' }    
@@ -19,7 +20,7 @@
 
     /* Style for the text container */
     .text-container {        
-        padding: 0px 50px;       /* 0px topp/bunn, 50px venstre/høyre */
+        padding: 0;
     }
 
     /* Ensure both sections have the same height and appearance */
@@ -37,52 +38,70 @@
     }
 
     .frame4-card {
-        /*background-color: #caedfb39;
-        background-color: #EBEBEB;
-        border-radius: 12px;
-        padding: 20px;             /* inside spacing */
-        height: 100%;              /* equal height if you use h-100 on column */
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 16px;
+        overflow: hidden;
         width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .frame4-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Text area grows so every card matches height */
+    .frame4-card p {
+        margin: 0;
+        padding: 20px 22px 24px;
+        width: 100%;
+        flex: 1 1 auto;
+        text-align: left;
+        font-size: 0.98rem;
+        line-height: 1.55;
+    }
+
+    .frame4-card a {
+        word-break: break-word;
     }
 
     /* Ensure both sections have the same height and appearance */
     .frame5 {
-        background-color: #F2F2F2;    /* Optional: Add a background color */        
-        border-left: 10px solid #ffffff;
-        border-right: 10px solid #ffffff;
-        padding: 0px;                   /* Add padding for better spacing */
-        display: flex;                  /* Use flexbox for alignment */
-        flex-direction: column;         /* Stack content vertically */
-        justify-content: center;        /* Center content vertically */
-        align-items: center;            /* Center content horizontally */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.0); /* Optional: Add a shadow for a frame effect */
-        height: auto;                   /* Allow the height to adjust dynamically */
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: auto;
     }
 
-    /* Image inside the card */
+    /* Logo area inside the card – fixed height so all cards align */
     .nyhetbilde-image{
-        width: 100%;             /* never exceed card width */        
-        height: auto;         /* keep aspect ratio */
-        object-fit: cover;       /* crop instead of stretch */
+        width: 100%;
+        height: 170px;
+        object-fit: contain;
+        padding: 26px;
+        background-color: #f7f9fb;
         display: block;
-        border-radius: 16px 16px 0 0; /* top-rounded only */
+        box-sizing: border-box;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
 
-    /* Desktop */
     @media (max-width: 992px) {
         .nyhetbilde-image {
-            width: 80%;             
-            max-height: 220px;
+            height: 160px;
         }
     }
 
-    /* Tablet */
     @media (max-width: 576px) {
         .nyhetbilde-image {
-            width: 60%;             
-            max-height: 100px;
-            
+            height: 150px;
         }
     }
 
@@ -100,7 +119,7 @@
     <div class="container mt-4">
         <div class="row justify-content-center align-items-lef">
             <div class="col-sm-12 d-flex flex-column justify-content-center align-items-left">
-                <h3>Alle nyheter</h3>
+                <h3>{$t.news.title}</h3>
             </div>
         </div>
     </div>
@@ -114,14 +133,7 @@
                     <!-- Image -->
                     <img src={kameleonrobotics.find(i => i.id === 1)?.image}
                          class="nyhetbilde-image">                    
-                    <p>
-                        Desember 2025 blei Optiram <strong>system integrator</strong> for Kameleon Robotics.
-                        Kameleon Robotics er distributør av Universal Robots i Norge.
-                        <br>
-                        <a href="https://www.kameleonrobotics.no/" target="_blank" rel="noopener noreferrer">
-                            www.kameleonrobotics.no
-                        </a>
-                    </p>            
+                    <p>{@html $t.news.kameleon}</p>            
                </div>
             </div>
             
@@ -132,10 +144,7 @@
                     <!-- Image -->
                     <img src={optirambildes.find(i => i.id === 1)?.image}
                          class="nyhetbilde-image">                    
-                    <p>
-                        Optiram har <strong>ansatt Stian</strong> som ny teknisk leder.
-                        Han tiltrer stillingen i Oktober 2025 og har lang og solid erfaring innen automasjon.
-                    </p> 
+                    <p>{@html $t.news.stian}</p> 
                 </div>
             </div>
             
@@ -145,10 +154,7 @@
                     <!-- Image -->
                     <img src={optirambildes.find(i => i.id === 1)?.image}
                          class="nyhetbilde-image">                     
-                    <p>
-                        Optriam flytter inn i <strong>nye lokaler</strong> i Rubbestadneset Oktober 2025.
-                        Dette gir oss bedre fasiliteter for å betjene våre kunder og utvikle våre løsninger.
-                    </p>
+                    <p>{@html $t.news.lokaler}</p>
                 </div>
             </div>
 
@@ -159,15 +165,7 @@
                     <!-- Image -->
                     <img src={i4factorys.find(i => i.id === 1)?.image}
                          class="nyhetbilde-image">                    
-                    <p>
-                        Optiram & i4Factory har inngått ein <strong>sammarbeidsavtale</strong>.
-                        i4Factory utvikler og leverer autonome maskineringsfabrikker.            
-                        Me gleder oss til videre sammerarbeid!
-                        <br>    
-                    <a href="https://www.i4factory.no/nb/" target="_blank" rel="noopener noreferrer">
-                        www.i4factory.no
-                    </a>
-                    </p> 
+                    <p>{@html $t.news.i4factory}</p> 
                </div>
             </div>
 
@@ -186,10 +184,7 @@
                     <!-- Image -->
                     <img src={optirambildes.find(i => i.id === 1)?.image}
                         class="nyhetbilde-image">                    
-                    <p>
-                        Optiram har <strong>ansatt Sveinung</strong> som ny daglig leder.
-                        Han tiltrer stillingen i Juni 2025 og har lang og solid erfaring innen automasjon.                        
-                    </p> 
+                    <p>{@html $t.news.sveinung}</p> 
                </div>
             </div>
 
@@ -199,10 +194,7 @@
                     <!-- Image -->
                     <img src={optirambildes.find(i => i.id === 1)?.image}
                          class="nyhetbilde-image">                    
-                    <p>
-                        Optiram har fått <strong>nye eigere</strong> Januar 2025.
-                        Dei nye eigarane har lang erfaring innan automasjon.                        
-                    </p> 
+                    <p>{@html $t.news.eiere}</p> 
                </div>
             </div>
             

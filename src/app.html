@@ -17,6 +17,11 @@
 		-->
 		<!-- Legg til Bootstrap5 CSS -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Moderne skrifttype (Inter) -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 	
 		<!-- Bootstrap forklaring
 		 	Bootstrap deler breidda inn i 12 kolonner.
@@ -40,6 +45,10 @@
 		-->
 
 		<style>			
+			html {
+				scroll-behavior: smooth;
+			}
+
 			body {
 				--bg-1: hsl(0, 0%, 100%);
 				--bg-2: hsl(0, 0%, 100%);
@@ -50,8 +59,9 @@
 				--link: hsl(0, 0%, 0%);
 				--link-hover: hsl(124, 77%, 55%);
 				--link-active: hsl(0, 0%, 0%);
-				--border-radius: 4px;
-				--font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+				--accent: hsl(207, 90%, 48%);
+				--border-radius: 8px;
+				--font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
 					'Open Sans', 'Helvetica Neue', sans-serif;
 				--font-mono: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas,
 					'DejaVu Sans Mono', monospace;
@@ -61,6 +71,10 @@
 				line-height: 1.5;
 				margin: 0rem;
 				height: calc(100vh - 2rem);
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+				text-rendering: optimizeLegibility;
+				letter-spacing: -0.01em;
 			}
 
 			h3 {
@@ -79,9 +93,10 @@
 			h4,
 			h5,
 			h6 {
-				font-weight: normal;
+				font-weight: 700;
 				font-variant-numeric: tabular-nums;
-				line-height: 1.1;
+				line-height: 1.15;
+				letter-spacing: -0.02em;
 			}
 
 			:is(h1, h2, h3, h4, h5, h6, p) {
@@ -136,13 +151,18 @@
 			button {
 				background: var(--link);
 				color: var(--bg-1);
-				padding: 0.5rem 1rem;
+				padding: 0.6rem 1.25rem;
 				border: none;
 				border-radius: var(--border-radius);
+				font-weight: 600;
+				cursor: pointer;
+				transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 			}
 
 			button:hover {
 				background: var(--link-hover);
+				transform: translateY(-1px);
+				box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 			}
 
 			button:active {
@@ -345,11 +365,14 @@
 				top: 0;
 				left: 0;
 				width: 100%;
-				background: var(--bg-2);
+				background: rgba(255, 255, 255, 0.72);
+				-webkit-backdrop-filter: saturate(180%) blur(14px);
+				backdrop-filter: saturate(180%) blur(14px);
 				color: var(--fg-1);
 				padding: 0rem;
 				z-index: 1000;
-				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+				box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 			}
 
 			.top-header-inner {
@@ -358,6 +381,7 @@
 				align-items: center;
 				max-width: 1920px;
 				margin: 0 auto;
+				padding: 0.75rem 1rem;
 			}
 
 			.top-nav {
@@ -367,15 +391,47 @@
 			}
 
 			.top-nav a {
+				position: relative;
 				text-decoration: none;
 				color: var(--fg-1);
-				font-size: 1.1rem;
+				font-size: 0.95rem;
+				font-weight: 600;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				padding: 0.25rem 0;
+				transition: color 0.2s ease;
+			}
+
+			.top-nav a::after {
+				content: "";
+				position: absolute;
+				left: 0;
+				bottom: -2px;
+				height: 2px;
+				width: 100%;
+				background: var(--accent);
+				transform: scaleX(0);
+				transform-origin: left;
+				transition: transform 0.5s ease;
+			}
+
+			.top-nav a:hover {
+				color: var(--accent);
+			}
+
+			.top-nav a:hover::after {
+				transform: scaleX(1);
 			}
 
 			#logo-icon {
 				cursor: pointer;
 				height: 40px;
+				transition: transform 0.2s ease;
 			}	
+
+			#logo-icon:hover {
+				transform: scale(1.05);
+			}
 
 
 
@@ -384,8 +440,9 @@
 				width: 100%;
 				background: var(--bg-2);
 				color: var(--fg-1);
-				padding: 1.5rem 1rem;
-				box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+				padding: 2rem 1rem;
+				border-top: 1px solid rgba(0, 0, 0, 0.06);
+				box-shadow: 0 -2px 24px rgba(0, 0, 0, 0.04);
 			}
 
 			.bottom-header-inner {
@@ -470,51 +527,11 @@
 		
 		
 
-		<!-- Top Header -->
-		<header class="top-header">
-			<div class="top-header-inner">
-				<nav class="top-nav">
-					<img id="logo-icon" src="Black logo.png" alt="Logo">
-					<a href="/">HJEM</a>
-					<a href="/news">NYHETER</a>
-					<a href="/about">Om oss</a>
-				</nav>
-			</div>
-		</header>
-
-
 		<!-- Main Content -->
 		<div style="margin-top: 80px; display: contents;"> <!-- Adjust margin-top to avoid overlap with the fixed header -->
 			%sveltekit.body%
 		</div>
 	
-
-		<!-- Bottom Header -->
-		<footer class="bottom-header">
-			<div class="bottom-header-inner">
-				<nav class="bottom-nav">
-
-					<div class="footer-block">
-						<strong>Sveinung Mæland</strong><br>
-						Mobil: 909 46 768<br>
-						E-post: sm@optiram.no
-					</div>
-
-					<div class="footer-block">
-						<strong>Stian S. Alvsvåg</strong><br>
-						Mobil: 905 72 687<br>
-						E-post: ssa@optiram.no
-					</div>
-
-					<div class="footer-block">
-						<strong>Optiram AS</strong><br>
-						Austbøvegen 44<br>
-						5420 Rubbestadneset, Norge
-					</div>
-
-				</nav>
-			</div>
-		</footer>
 
 
 
@@ -532,7 +549,6 @@
 
 			// Få tak i bildet ved hjelp av ID
 			<!-- const themeIcon = document.getElementById('theme-icon'); -->
-			const logoIcon = document.getElementById('logo-icon');
 
 
 			// Legg til en klikkhendelse på themeIcon bildet			
@@ -553,12 +569,6 @@
 			//		document.body.classList.remove('dark');
 			//	}
 			//}); 
-			
-
-			// Add a click event to the logo icon to navigate to the HOME page
-			logoIcon.addEventListener('click', () => {			
-				window.location.href = '/'; // Redirect to the HOME page
-			});
 		</script>
 	</body>
 </html>

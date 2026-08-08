@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy  } from 'svelte';
+    import { t } from '$lib/i18n';
 
 
     let show = false;
@@ -56,23 +57,35 @@
 
 
 
-    const items = [
-        { text: "OPTIMALISERING", color: "#FFFFFF" }, // blå
-        { text: "AUTOMASJON", color: "#FFFFFF" },     // grønn
-        { text: "ROBOTIKK", color: "#FFFFFF" }        // oransje
-        //{ text: "ROBOTIKK", color: "#FFC000" }        // oransje
-    ];
-
     let index = 0;
-    let current = items[index];
     // @ts-ignore
     let timer;
 
+    $: heroWords = $t.home.heroWords;
+    $: current = heroWords[index % heroWords.length];
+
     onMount(() => {
         timer = setInterval(() => {
-        index = (index + 1) % items.length;
-        current = items[index];
+            index = (index + 1) % heroWords.length;
         }, 5000);
+    });
+
+    // Fade sections in as they scroll into view (progressive enhancement)
+    onMount(() => {
+        if (!('IntersectionObserver' in window)) return;
+        const targets = document.querySelectorAll('main .container, main .container-fluid');
+        const io = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-visible');
+                    io.unobserve(entry.target);
+                }
+            }
+        }, { threshold: 0.12 });
+        targets.forEach((el) => {
+            el.classList.add('reveal');
+            io.observe(el);
+        });
     });
 
     // @ts-ignore
@@ -114,11 +127,15 @@
     /* The always-blurred background layer */
     .image-wrapper {
         position: relative;
-        height: 800px;          /* set your height */
+        height: 100vh;          /* full-screen cinematic hero */
+        min-height: 560px;
         width: 100%;            /* full width */
         display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
         overflow: hidden;
-        border-radius: 20px;
+        border-radius: 0;
 
         background-image: var(--bg);
         background-size: cover;
@@ -137,6 +154,158 @@
         background-color: rgba(255, 255, 255, 0.484);
         background-blend-mode: multiply;
         transform: scale(1.0);
+    }
+
+    /* Cinematic dark gradient for text contrast */
+    .image-wrapper::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.20) 45%, rgba(0,0,0,0.60) 100%);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #fff;
+    }
+
+    .hero-eyebrow {
+        margin: 0 0 1rem 0;
+        font-size: clamp(0.75rem, 1.4vw, 1rem);
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        font-weight: 600;
+        opacity: 0.85;
+    }
+
+    .hero-title {
+        margin: 0;
+        font-size: clamp(3rem, 9vw, 7rem);
+        font-weight: 800;
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero-title strong {
+        font-weight: 800;
+    }
+
+    .hero-subtitle {
+        margin: 1.5rem 0 0 0;
+        max-width: 640px;
+        font-size: clamp(1.05rem, 2vw, 1.4rem);
+        font-weight: 400;
+        line-height: 1.5;
+        opacity: 0.92;
+        text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-actions {
+        margin-top: 2.5rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 200px;
+        padding: 0.9rem 2rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-pill-primary {
+        background: rgba(255, 255, 255, 0.92);
+        color: #111;
+    }
+
+    .btn-pill-primary:hover {
+        background: #fff;
+        color: #111;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-pill-secondary {
+        background: rgba(30, 30, 30, 0.45);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-pill-secondary:hover {
+        background: rgba(30, 30, 30, 0.75);
+        color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .hero-scroll {
+        margin-top: 3rem;
+        width: 26px;
+        height: 42px;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        border-radius: 999px;
+        display: flex;
+        justify-content: center;
+        padding-top: 8px;
+    }
+
+    .hero-scroll-dot {
+        width: 4px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.9);
+        animation: hero-scroll-anim 1.6s ease-in-out infinite;
+    }
+
+    @keyframes hero-scroll-anim {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(14px); opacity: 0; }
+    }
+
+    /* Scroll reveal (added at runtime) */
+    :global(.reveal) {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+        will-change: opacity, transform;
+    }
+
+    :global(.reveal-visible) {
+        opacity: 1;
+        transform: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        :global(.reveal) {
+            opacity: 1;
+            transform: none;
+            transition: none;
+        }
+        .hero-scroll-dot {
+            animation: none;
+        }
     }
 
 
@@ -356,9 +525,9 @@
 {#if show}
     <div class="cookie-banner">
         <p>
-            Vi bruker informasjonskapsler (cookies) for å forbedre opplevelsen.
+            {$t.home.cookie}
         </p>
-        <button on:click={acceptCookies}>Godta</button>
+        <button on:click={acceptCookies}>{$t.home.accept}</button>
     </div>
 {/if}
 
@@ -370,14 +539,21 @@
         {#each topbildes as topbilde (topbilde.id)}
             {#if topbilde.id === 1}
                 <div class="image-wrapper" style={`--bg: url('${topbilde.image}');`}>
-                    <div class="image-text3">
-                        <br>
-                            <div class="label">
-                                <strong style="color: {current.color}; transition: color 0.5s ease;">
-                                    {current.text}
-                                </strong>
-                            </div>
-                        <br>
+                    <div class="hero-content">
+                        <p class="hero-eyebrow">OPTIRAM</p>
+                        <h1 class="hero-title">
+                            <strong style="color: #FFFFFF; transition: color 0.5s ease;">{current}</strong>
+                        </h1>
+                        <p class="hero-subtitle">
+                            {$t.home.heroSubtitle}
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#losninger" class="btn-pill btn-pill-primary">{$t.home.solutions}</a>
+                            <a href="/about" class="btn-pill btn-pill-secondary">{$t.home.aboutBtn}</a>
+                        </div>
+                        <div class="hero-scroll" aria-hidden="true">
+                            <span class="hero-scroll-dot"></span>
+                        </div>
                     </div>
                 </div>
             {/if}
@@ -388,26 +564,18 @@
      
     <div class="container-fluid p-5 text-black text-center">        
             <br>
-            <h1><strong>Velkommen til Optiram</strong></h1>
-            <p>Din partner for neste generasjons produksjons- og automasjonsløsninger </p>                    
+            <h1><strong>{$t.home.welcomeTitle}</strong></h1>
+            <p>{$t.home.welcomeSubtitle}</p>                    
     </div>
     
     <br>
 
        
-    <div class="container mt-5 d-flex justify-content-center align-items-center ">
+    <div id="losninger" class="container mt-5 d-flex justify-content-center align-items-center ">
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center text-container2">
-                <h3><strong>Robotikk og automasjon</strong></h3>
-                <p>
-                    Vår lidenskap er å skape innovative løsninger som øker kvalitet, effektivitet og som gir langsiktig verdiskaping for deg og din virksomhet. 
-                    Gjennom tett samarbeid utvikler og leverer vi robot- og automasjonsløsninger som optimaliserer flyt, reduserer kostnader og øker kapasiteten i produksjonen.
-                    <br><br>
-                    Vi kombinerer teknisk innsikt med praktisk forståelse for produksjonsprosesser, og legger stor vekt på driftssikkerhet, presisjon og repeterbar kvalitet. 
-                    Våre løsninger tilpasses dine behov – fra enkle robotceller til komplekse, helautomatiserte produksjonslinjer.
-                    <br>
-                    Husk at en robot ikke sover, men kan ha klargjort for deg når du kommer på jobb.
-                </p>
+                <h3><strong>{$t.home.robotikk.title}</strong></h3>
+                <p>{@html $t.home.robotikk.body}</p>
                 <br>
             </div>
             <div class="col-lg-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center">
@@ -439,18 +607,8 @@
             </div>
             <!-- Teksten -->
             <div class="col-lg-6 order-lg-2 order-1 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3><strong>Automation system</strong></h3>
-                <p>
-                    Vi har lang erfaring med levering av komplette automasjonssystemer til industrien. 
-                    Våre løsninger skreddersys for å møte dine tekniske og operasjonelle krav, med særlig fokus på driftssikkerhet, brukervennlighet og effektivitet.
-                    <br>
-                    <br>
-                    Vi tar ansvar for hele leveransen – fra konsept og prosjektering til programmering, testing og idriftsettelse.
-                    Gjennom tett samarbeid med kundene våre sikrer vi at løsningen er tilpasset både dagens behov og fremtidig utvikling.
-                    <br>
-                    <br>
-                    Med solid kompetanse innen PLC-, HMI- og drivesystemer leverer vi stabile og fremtidsrettede løsninger som er enkle å drifte og vedlikeholde.
-                </p>
+                <h3><strong>{$t.home.automation.title}</strong></h3>
+                <p>{@html $t.home.automation.body}</p>
                 <br>
             </div>
         </div>
@@ -465,16 +623,8 @@
      <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
         <div class="row g-0 align-items-stretch">
             <div class="col-lg-6 d-flex flex-column justify-content-start align-items-center text-container2">
-                <h3><strong>Programmering og prosjekteringstjenester</strong></h3>
-                <p>
-                    Vi tilbyr programmering og prosjekteringstjenester innen industriell automasjon, robotikk og digitale løsninger. 
-                    Gjennom tett og profesjonelt samarbeid leverer vi løsninger som er tilpasset dine behov og eksisterende systemer.
-                    <br><br>
-                    Vi har solid erfaring med prosjektgjennomføring, PLC- og HMI-programmering samt utvikling av webbaserte løsninger.
-                    <br>
-                    <br>
-                    Vår kompetanse omfatter blant annet systemer fra Beckhoff, Siemens, Beijer, Wago, Mitsubishi og Omron, samt plattformer basert på CODESYS.
-                </p>
+                <h3><strong>{$t.home.programmering.title}</strong></h3>
+                <p>{@html $t.home.programmering.body}</p>
                 <br>
             </div>
             <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center">
@@ -505,17 +655,8 @@
             </div>
             <!-- Teksten -->
             <div class="col-lg-6 order-lg-2 order-1 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3><strong>OptiCloud og Opti-IoT</strong></h3>
-                <p>
-                Med OptiCloud og Opti-IoT samler, analyserer og visualiserer vi data i sanntid.
-                Dette gir deg bedre innsikt i drift, ytelse og tilstand – og et solid grunnlag for datadrevne beslutninger.
-                <br><br>
-                Våre løsninger knytter sammen maskiner, sensorer og systemer på en trygg og skalerbar måte, og gjør det enkelt å overvåke prosesser både lokalt og via skybaserte løsninger. 
-                Informasjonen presenteres i oversiktlige dashbord som gir operatører og ledelse rask tilgang til riktig data til riktig tid.
-                <br><br>
-                Avanserte algoritmer identifiserer avvik, optimaliseringspotensial og foreslår målrettede tiltak.
-                Resultatet er bedre ressursutnyttelse, høyere kvalitet og mer stabil drift.
-                </p> 
+                <h3><strong>{$t.home.opticloud.title}</strong></h3>
+                <p>{@html $t.home.opticloud.body}</p> 
                 <br>
             </div>
         </div>
