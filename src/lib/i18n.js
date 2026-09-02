@@ -63,6 +63,8 @@ export const translations = {
 		},
 		news: {
 			title: 'Alle nyheter',
+			torbjorn:
+				'Optiram har <strong>ansatt Torbjørn Grønås</strong>. Han tiltrer stillingen 1. September 2026 og har lang og solid erfaring innen automasjon.',
 			kameleon:
 				'Desember 2025 blei Optiram <strong>system integrator</strong> for Kameleon Robotics. Kameleon Robotics er distributør av Universal Robots i Norge.<br><a href="https://www.kameleonrobotics.no/" target="_blank" rel="noopener noreferrer">www.kameleonrobotics.no</a>',
 			stian:
@@ -126,6 +128,8 @@ export const translations = {
 		},
 		news: {
 			title: 'All news',
+			torbjorn:
+				'Optiram has <strong>hired Torbjørn Grønås</strong>. He starts on 1 September 2026 and brings long and solid experience within automation.',
 			kameleon:
 				'In December 2025 Optiram became <strong>system integrator</strong> for Kameleon Robotics. Kameleon Robotics is the distributor of Universal Robots in Norway.<br><a href="https://www.kameleonrobotics.no/" target="_blank" rel="noopener noreferrer">www.kameleonrobotics.no</a>',
 			stian:

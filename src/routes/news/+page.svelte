@@ -127,6 +127,16 @@
 
     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
         <div class="row g-4">
+            <!-- Text Section 0 -->
+            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
+                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
+                    <!-- Image -->
+                    <img src={optirambildes.find(i => i.id === 1)?.image}
+                         class="nyhetbilde-image">
+                    <p>{@html $t.news.torbjorn}</p>
+                </div>
+            </div>
+
             <!-- Text Section 1 --> 
             <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
                 <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
@@ -169,16 +179,7 @@
                </div>
             </div>
 
-        </div>
-    </div>
-
-
-    
-
-    <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
-        <div class="row g-4">
-           
-            <!-- Text Section 1 -->
+            <!-- Text Section 5 -->
             <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
                     <!-- Image -->
@@ -188,7 +189,7 @@
                </div>
             </div>
 
-            <!-- Text Section 2 -->
+            <!-- Text Section 6 -->
             <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
                     <!-- Image -->
