@@ -59,7 +59,8 @@ export const translations = {
 			country: 'Norge',
 			employees: 'Ansatte',
 			ceoRole: 'CEO – Daglig leder',
-			ctoRole: 'CTO – Teknisk leder'
+			ctoRole: 'CTO – Teknisk leder',
+			seniorAutomationRole: 'Senior Automasjon Ingeniør'
 		},
 		news: {
 			title: 'Alle nyheter',
@@ -124,7 +125,8 @@ export const translations = {
 			country: 'Norway',
 			employees: 'Team',
 			ceoRole: 'CEO – Managing Director',
-			ctoRole: 'CTO – Technical Director'
+			ctoRole: 'CTO – Technical Director',
+			seniorAutomationRole: 'Senior Automation Engineer'
 		},
 		news: {
 			title: 'All news',
