@@ -1,345 +1,336 @@
 <script>
-    import { t } from '$lib/i18n';
-
-    let locations = [              
-        { id: 1, image: 'Kai.JPG' }    
-    ];
-
-    let sveinungs = [              
-        { id: 1, image: 'Sveinung_ver1.png' }    
-    ];
-
-    let stians = [              
-        { id: 1, image: 'Stian_ver2.png' }    
-    ];
-
-    let torbjorns = [              
-        { id: 1, image: 'Torbjorn_ver2.png' }    
-    ];
-
-    // Coordinates for Austbøvegen 44, Rubbestadneset
-	const mapEmbedUrl =
-		"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2265.210944828763!2d5.2728393!3d59.8162208!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x463c80d9df0d5573:0x9cac4120e3bb051e!2sAustb%C3%B8vegen%2044%2C%205420%20Rubbestadneset!5e1!3m2!1sen!2sno!4v1735740000000";
-
+	import { t } from '$lib/i18n';
+	import { people, team, address } from '$lib/site';
+	import Icon from '$lib/components/Icon.svelte';
 </script>
 
+<svelte:head>
+	<title>{$t.meta.aboutTitle}</title>
+	<meta name="description" content={$t.meta.aboutDescription} />
+</svelte:head>
 
+<!-- Intro -->
+<section class="container intro">
+	<div class="intro-head">
+		<span class="eyebrow">{$t.about.eyebrow}</span>
+		<h1 class="h1">{$t.about.title}</h1>
+	</div>
+	<div class="intro-text">
+		<p>{$t.about.intro1}</p>
+		<p>{$t.about.intro2}</p>
+	</div>
+</section>
 
+<!-- Visjon -->
+<section class="container vision-wrap">
+	<div class="vision">
+		<span class="eyebrow soft">{$t.about.visionEyebrow}</span>
+		<p>{$t.about.vision}</p>
+	</div>
+</section>
+
+<!-- Ansatte -->
+<section class="container team-wrap" aria-labelledby="team-tittel">
+	<div class="section-head">
+		<span class="eyebrow">{$t.about.teamEyebrow}</span>
+		<h2 id="team-tittel" class="h2">{$t.about.teamTitle}</h2>
+	</div>
+	<div class="team">
+		{#each team as id (id)}
+			{@const p = people[id]}
+			<article class="person">
+				<img
+					src={p.img}
+					alt={p.name}
+					style:object-position={p.imgPos}
+					loading="lazy"
+					width="480"
+					height="500"
+				/>
+				<div class="person-body">
+					<h3>{p.name}</h3>
+					<span class="role">{$t.roles[p.role]}</span>
+					<div class="person-links">
+						<a href="tel:{p.tel}"><Icon name="phone" /><span class="visually-hidden">{$t.footer.phone}: </span>{p.phone}</a>
+						<a href="mailto:{p.email}"><Icon name="mail" /><span class="visually-hidden">{$t.footer.email}: </span>{p.email}</a>
+					</div>
+				</div>
+			</article>
+		{/each}
+	</div>
+</section>
+
+<!-- Historikk -->
+<section class="section section-alt" aria-labelledby="historikk-tittel">
+	<div class="container history">
+		<div class="section-head">
+			<span class="eyebrow">{$t.about.historyEyebrow}</span>
+			<h2 id="historikk-tittel" class="h2">{$t.about.historyTitle}</h2>
+		</div>
+		<ol class="timeline">
+			{#each $t.about.history as row, i (i)}
+				<li>
+					<span class="date">{row.date}</span>
+					<span>{row.text}</span>
+				</li>
+			{/each}
+		</ol>
+	</div>
+</section>
+
+<!-- Hvor finner du oss -->
+<section id="kontakt" class="section" aria-labelledby="hvor-tittel">
+	<div class="container where">
+		<div class="where-text">
+			<span class="eyebrow">{$t.about.whereEyebrow}</span>
+			<h2 id="hvor-tittel" class="h2">{$t.about.whereTitle}</h2>
+			<address>
+				<span>{address.street}</span>
+				<span>{address.postal}</span>
+				<span>{$t.footer.country}</span>
+			</address>
+			<div class="btn-row">
+				<a href={address.mapsLink} class="btn btn-primary" target="_blank" rel="noopener noreferrer"
+					>{$t.about.directions}</a
+				>
+				<a href="mailto:{people.sveinung.email}" class="btn btn-secondary">{$t.about.sendEmail}</a>
+			</div>
+		</div>
+		<div class="map">
+			<iframe
+				src={address.mapEmbed}
+				title={$t.about.mapTitle}
+				loading="lazy"
+				referrerpolicy="no-referrer-when-downgrade"
+				allowfullscreen
+			></iframe>
+		</div>
+	</div>
+</section>
 
 <style>
-
-    .contact-line {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0.3rem 0;
-        color: inherit;
-        text-decoration: none;
-        transition: color 0.2s ease;
-    }
-
-    .contact-line:hover {
-        color: var(--accent);
-    }
-
-    .contact-icon {
-        flex-shrink: 0;
-        opacity: 0.75;
-    }
-
-    /* Style for the robot image */
-    .location-image {
-        width: 100%;               /* Ensure the image fills the width of the frame */
-        height: 100%;              /* Maintain aspect ratio */
-        max-height: 100%;          /* Optional: Set a maximum height */        
-        object-fit: cover;         /* Ensure the image covers the frame without distortion */
-        margin: 0;                 /* Remove any default margin */
-        display: block;            /* Ensure the image behaves as a block element */
-        opacity: 0.9;              /* 0.0 = usynlig, 1.0 = original */
-    }
-
-    /* Employee portrait – constrained and centered */
-    .sveinung-image,
-    .stian-image,
-    .torbjorn-image {
-        width: 100%;
-        max-width: 230px;
-        height: auto;
-        object-fit: cover;
-        border-radius: 16px;
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-        margin: 0 auto;
-        display: block;
-    }
-
-    /* Employee split-panel card */
-    .frame3 {
-        background-color: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        padding: 0;
-        display: block;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
-        height: auto;
-        border-radius: 22px;
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .frame3:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.13);
-    }
-
-    .frame3 .row {
-        width: 100%;
-        margin: 0;
-        --bs-gutter-x: 0;
-        align-items: stretch;
-    }
-
-    .frame3 .photo-col {
-        padding: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Text side */
-    .frame3 .text-container {
-        align-items: flex-start !important;
-        justify-content: center;
-        text-align: left;
-        padding: 2.75rem 2.5rem;
-    }
-
-    .frame3 .text-container h3 {
-        font-size: clamp(1.55rem, 2.4vw, 2rem);
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        margin: 0 0 0.4rem 0;
-    }
-
-    .frame3 .role {
-        display: inline-block;
-        color: var(--accent);
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        margin: 0 0 1.4rem 0;
-        padding-bottom: 1.1rem;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    /* Contact pills */
-    .frame3 .contact-line {
-        background: #f4f7fb;
-        color: #1a1a1a;
-        padding: 0.55rem 1rem;
-        border-radius: 999px;
-        font-size: 0.95rem;
-        margin: 0.35rem 0;
-        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    }
-
-    .frame3 .contact-line:hover {
-        background: var(--accent);
-        color: #ffffff;
-        transform: translateX(3px);
-    }
-
-    .frame3 .contact-line:hover .contact-icon {
-        opacity: 1;
-    }
-
-    @media (max-width: 767px) {
-        .sveinung-image,
-        .stian-image,
-        .torbjorn-image {
-            max-width: 200px;
-        }
-
-        .frame3 .text-container {
-            padding: 2rem 1.75rem;
-            align-items: center !important;
-            text-align: center;
-        }
-
-        .frame3 .role {
-            align-self: center;
-        }
-    }
-
-    .map-wrapper {
-		display: flex;
-		justify-content: center;
+	.intro {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr));
+		gap: clamp(24px, 5vw, 64px);
+		align-items: start;
+		padding-block: clamp(40px, 7vw, 88px) clamp(40px, 5vw, 64px);
 	}
 
-    .map-container {
-		position: relative;
-		width: 100%;     
-        max-width: 1330px;        
-		padding-bottom: 56.25%; /* 16:9 ratio */
-		height: 0;        
-		margin: 0rem 0;
-		border-radius: 12px;
+	.intro-head {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.intro-text {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		font-size: 17px;
+		color: var(--fg-2);
+		padding-top: 8px;
+		text-wrap: pretty;
+	}
+
+	.vision-wrap {
+		padding-bottom: var(--section-y);
+	}
+
+	.vision {
+		background: var(--accent-soft);
+		border-radius: 28px;
+		padding: clamp(24px, 5vw, 64px);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.eyebrow.soft {
+		color: var(--accent-soft-fg);
+	}
+
+	.vision p {
+		font-size: clamp(22px, 3vw, 38px);
+		line-height: 1.24;
+		font-weight: 600;
+		letter-spacing: -0.025em;
+		max-width: 920px;
+		text-wrap: balance;
+	}
+
+	.team-wrap {
+		padding-bottom: var(--section-y);
+	}
+
+	.team {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+		gap: 24px;
+	}
+
+	.person {
+		display: flex;
+		flex-direction: column;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: 20px;
 		overflow: hidden;
 	}
 
-	.map-container iframe {
-		position: absolute;
-		top: 0;
-		left: 0;
+	.person img {
 		width: 100%;
-		height: 100%;
-		border: 0;
+		aspect-ratio: 4 / 4.2;
+		height: auto;
+		object-fit: cover;
+		background: var(--surface-2);
 	}
 
+	.person-body {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding: 24px;
+	}
+
+	.person h3 {
+		font-size: 20px;
+		font-weight: 700;
+	}
+
+	.role {
+		font-size: 15px;
+		color: var(--fg-3);
+	}
+
+	.person-links {
+		display: flex;
+		flex-direction: column;
+		margin-top: 10px;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.person-links a {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-height: 40px;
+	}
+
+	.history {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+		gap: clamp(16px, 5vw, 64px);
+	}
+
+	.timeline {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.timeline li {
+		display: grid;
+		grid-template-columns: 120px 1fr;
+		gap: 24px;
+		padding: 18px 0;
+		border-top: 1px solid var(--line);
+	}
+
+	.timeline li:last-child {
+		border-bottom: 1px solid var(--line);
+	}
+
+	.date {
+		font-weight: 700;
+		color: var(--accent);
+	}
+
+	.where {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+		gap: 48px;
+		align-items: stretch;
+	}
+
+	.where-text {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	address {
+		font-style: normal;
+		font-size: 17px;
+		color: var(--fg-2);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.map {
+		min-height: 360px;
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		border: 1px solid var(--line);
+		background: var(--surface-2);
+	}
+
+	.map iframe {
+		width: 100%;
+		height: 100%;
+		min-height: 360px;
+		border: 0;
+		display: block;
+	}
+
+	@media (max-width: 600px) {
+		.timeline li {
+			grid-template-columns: 1fr;
+			gap: 2px;
+			padding: 14px 0;
+		}
+
+		.date {
+			font-size: 14px;
+		}
+
+		.person {
+			flex-direction: row;
+		}
+
+		.person img {
+			width: 120px;
+			aspect-ratio: auto;
+			align-self: stretch;
+		}
+
+		.person-body {
+			padding: 16px;
+			gap: 2px;
+			min-width: 0;
+		}
+
+		.person h3 {
+			font-size: 17px;
+		}
+
+		.role {
+			font-size: 14px;
+		}
+
+		.person-links {
+			margin-top: 4px;
+		}
+
+		.person-links a {
+			min-height: 44px;
+			word-break: break-word;
+		}
+
+		.map,
+		.map iframe {
+			min-height: 260px;
+		}
+	}
 </style>
-
-
-<main>
-    <br>
-    <br>
-    <br>
-
-    <div class="container mt-5">
-        <div class="row justify-content-center align-items-center">        
-            <div class="col-sm-12 d-flex flex-column justify-content-center align-items-center">      
-                <h3>{$t.about.title}</h3>          
-                <p>{$t.about.intro1}</p>
-                <p>{$t.about.intro2}</p>                    
-            </div>            
-        </div>
-    </div>
-
-
-    
-
-
-
-    <div class="container mt-4">
-        <div class="row justify-content-center align-items-lef">        
-            <div class="col-sm-12 d-flex flex-column justify-content-center align-items-left">            
-                <h2>{$t.about.whereTitle}</h2>
-                <p1> 5420 Rubbestadneset </p1>                
-                <p1> Austbøvegen 44 </p1>                                                   
-                <p1> {$t.about.country} </p1>   
-                <br>                             
-            </div>            
-        </div>
-    </div>
-   
-
-    <div class="container mt-5">
-        <div class="map-wrapper">
-            <div class="map-container">
-                <iframe
-                    src={mapEmbedUrl}
-                    loading="lazy"
-                    allowfullscreen
-                ></iframe>
-            </div>
-        </div>
-    </div>
-
-    <br>
-    <br>
-    
-
-    <div class="container mt-4">
-        <div class="row justify-content-center align-items-lef">
-            <div class="col-sm-12 d-flex flex-column justify-content-center align-items-left">
-                <h3>{$t.about.employees}</h3>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="container mt-5 d-flex justify-content-center align-items-center width-100 frame3">
-        <div class="row">
-            <!-- Text Section -->
-            <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3>Sveinung Mæland</h3>
-                <p class="role">{$t.about.ceoRole}</p>
-                <a class="contact-line" href="tel:+4790946768">
-                    <svg class="contact-icon" role="img" aria-label={$t.footer.phone} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    +47 909 46 768
-                </a>
-                <a class="contact-line" href="mailto:sm@optiram.no">
-                    <svg class="contact-icon" role="img" aria-label={$t.footer.email} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-                    sm@optiram.no
-                </a>
-            </div>
-
-            <!-- Image Section -->
-            <div class="col-12 col-md-6 photo-col d-flex flex-column justify-content-center align-items-center align-items-md-start">
-                {#each sveinungs as sveinung (sveinung.id)}
-                    {#if sveinung.id === 1}
-                        <img src="{sveinung.image}" class="sveinung-image">
-                    {/if}
-                {/each}
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-5 d-flex justify-content-center align-items-center width-100 frame3">
-        <div class="row">
-            <!-- Text Section -->
-            <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3>Stian S. Alvsvåg</h3>
-                <p class="role">{$t.about.ctoRole}</p>
-                <a class="contact-line" href="tel:+4790572687">
-                    <svg class="contact-icon" role="img" aria-label={$t.footer.phone} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    +47 905 72 687
-                </a>
-                <a class="contact-line" href="mailto:ssa@optiram.no">
-                    <svg class="contact-icon" role="img" aria-label={$t.footer.email} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-                    ssa@optiram.no
-                </a>
-            </div>
-
-            <!-- Image Section -->
-            <div class="col-12 col-md-6 photo-col d-flex flex-column justify-content-center align-items-center align-items-md-start">
-                {#each stians as stian (stian.id)}
-                    {#if stian.id === 1}
-                        <img src="{stian.image}" class="stian-image">
-                    {/if}
-                {/each}
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-5 d-flex justify-content-center align-items-center width-100 frame3">
-        <div class="row">
-            <!-- Text Section -->
-            <div class="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3>Torbjørn Grønås</h3>
-                <p class="role">{$t.about.seniorAutomationRole}</p>
-                <a class="contact-line" href="tel:+4794508673">
-                    <svg class="contact-icon" role="img" aria-label={$t.footer.phone} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    +47 945 08 673
-                </a>
-                <a class="contact-line" href="mailto:tg@optiram.no">
-                    <svg class="contact-icon" role="img" aria-label={$t.footer.email} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
-                    tg@optiram.no
-                </a>
-            </div>
-
-            <!-- Image Section -->
-            <div class="col-12 col-md-6 photo-col d-flex flex-column justify-content-center align-items-center align-items-md-start">
-                {#each torbjorns as torbjorn (torbjorn.id)}
-                    {#if torbjorn.id === 1}
-                        <img src="{torbjorn.image}" class="torbjorn-image">
-                    {/if}
-                {/each}
-            </div>
-        </div>
-    </div>
-
-    <br>
-    <br>
-    <br>
-    <br>
-
-</main>

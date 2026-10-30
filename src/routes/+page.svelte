@@ -1,672 +1,415 @@
 <script>
-    import { onMount, onDestroy  } from 'svelte';
-    import { t } from '$lib/i18n';
+	import { onMount, tick } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { slide } from 'svelte/transition';
+	import { t } from '$lib/i18n';
+	import { serviceImages, platforms } from '$lib/site';
+	import Icon from '$lib/components/Icon.svelte';
+	import ContactPeople from '$lib/components/ContactPeople.svelte';
 
+	/** Hvilken tjeneste som er åpnet med «Les mer» (null = ingen) */
+	let openId = $state(/** @type {string | null} */ (null));
 
-    let show = false;
-
-	// @ts-ignore
-	function setCookie(name, value, days = 365) {
-		const expires = new Date(Date.now() + days * 864e5).toUTCString();
-		document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
-	}
-
-	// @ts-ignore
-	function getCookie(name) {
-		return document.cookie
-			.split('; ')
-			.find(row => row.startsWith(name + '='))
-			?.split('=')[1];
-	}
-
-	function acceptCookies() {
-		setCookie('cookie_consent', 'accepted');
-		show = false;
-	}
+	/** Nettbrett/PC (fra 700 px): åpnet kort legges øverst og over hele bredden. Mobil: åpnes der det står. */
+	let wide = $state(false);
 
 	onMount(() => {
-		if (!getCookie('cookie_consent')) {
-			show = true;
-		}
+		const mq = window.matchMedia('(min-width: 700px)');
+		wide = mq.matches;
+		const onChange = () => (wide = mq.matches);
+		mq.addEventListener('change', onChange);
+		return () => mq.removeEventListener('change', onChange);
 	});
 
+	const services = $derived.by(() => {
+		const list = $t.home.services.map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0') }));
+		if (!wide || !openId) return list;
+		return [...list.filter((s) => s.id === openId), ...list.filter((s) => s.id !== openId)];
+	});
 
+	/** @param {string} id */
+	async function toggle(id) {
+		const opening = openId !== id;
+		openId = opening ? id : null;
+		if (opening && wide) {
+			await tick();
+			const el = document.getElementById(`tjeneste-${id}`);
+			if (el && el.getBoundingClientRect().top < 80) {
+				el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+		}
+	}
 
-
-    let topbildes = [              
-        /* { id: 1, image: '/topbilde.JPG' }    */
-        { id: 1, image: '/topbilde.png' }    
-    ];   
-
-    let robots = [              
-        { id: 1, image: 'IMG_5991.JPG' }    
-    ];    
-
-    let automations = [              
-        { id: 1, image: 'automationVer1.jpg' }    
-    ];
-
-    let iots = [              
-        { id: 1, image: 'OpticloudVer1.png' }    
-    ];
-
-    let konsulents = [              
-        { id: 1, image: 'konsulentVer1.jpg' }    
-    ];
-
-
-
-
-    let index = 0;
-    // @ts-ignore
-    let timer;
-
-    $: heroWords = $t.home.heroWords;
-    $: current = heroWords[index % heroWords.length];
-
-    onMount(() => {
-        timer = setInterval(() => {
-            index = (index + 1) % heroWords.length;
-        }, 5000);
-    });
-
-    // Fade sections in as they scroll into view (progressive enhancement)
-    onMount(() => {
-        if (!('IntersectionObserver' in window)) return;
-        const targets = document.querySelectorAll('main .container, main .container-fluid');
-        const io = new IntersectionObserver((entries) => {
-            for (const entry of entries) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('reveal-visible');
-                    io.unobserve(entry.target);
-                }
-            }
-        }, { threshold: 0.12 });
-        targets.forEach((el) => {
-            el.classList.add('reveal');
-            io.observe(el);
-        });
-    });
-
-    // @ts-ignore
-    onDestroy(() => clearInterval(timer));
-
-
+	const reduceMotion =
+		typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const dur = reduceMotion ? 0 : 280;
 </script>
 
+<svelte:head>
+	<title>{$t.meta.homeTitle}</title>
+	<meta name="description" content={$t.meta.homeDescription} />
+</svelte:head>
+
+<!-- Hero -->
+<section class="container hero">
+	<div class="hero-text">
+		<span class="eyebrow">{$t.home.eyebrow}</span>
+		<h1 class="h1">{$t.home.title}</h1>
+		<p class="lead">{$t.home.lead}</p>
+		<div class="btn-row">
+			<a href="#losninger" class="btn btn-primary">{$t.home.ctaSolutions} <Icon name="arrow" /></a>
+			<a href="/about" class="btn btn-secondary">{$t.home.ctaAbout}</a>
+		</div>
+	</div>
+	<img
+		class="hero-img"
+		src="/img/hero.webp"
+		alt={$t.home.heroAlt}
+		width="1600"
+		height="1200"
+		fetchpriority="high"
+	/>
+</section>
+
+<!-- Våre løsninger -->
+<section id="losninger" class="section section-alt" aria-labelledby="losninger-tittel">
+	<div class="container">
+		<div class="head-row">
+			<div class="section-head">
+				<span class="eyebrow">{$t.home.solutionsEyebrow}</span>
+				<h2 id="losninger-tittel" class="h2">{$t.home.solutionsTitle}</h2>
+			</div>
+			<p class="head-lead">{$t.home.solutionsLead}</p>
+		</div>
+
+		<div
+			class="services"
+			style:grid-template-columns={wide && openId
+				? `repeat(${services.length - 1}, minmax(0, 1fr))`
+				: undefined}
+		>
+			{#each services as s (s.id)}
+				{@const img = serviceImages[s.id]}
+				{@const open = openId === s.id}
+				<article
+					id="tjeneste-{s.id}"
+					class="service"
+					class:open
+					class:wide-open={open && wide}
+					animate:flip={{ duration: dur }}
+				>
+					<img
+						src={img.src}
+						alt={s.alt}
+						style:object-position={img.pos}
+						loading="lazy"
+						width="1200"
+						height="900"
+					/>
+					<div class="service-body">
+						<span class="num">{s.num}</span>
+						<h3 class="service-title">{s.title}</h3>
+						{#if open}
+							<div class="more" id="mer-{s.id}" transition:slide={{ duration: dur }}>
+								{#each s.paras as p, i (i)}
+									<p>{p}</p>
+								{/each}
+								<div class="btn-row">
+									<a href="#kontakt" class="btn btn-primary">{$t.nav.contact}</a>
+								</div>
+							</div>
+						{:else}
+							<p class="short">{s.short}</p>
+						{/if}
+						<button
+							type="button"
+							class="toggle"
+							aria-expanded={open}
+							aria-controls="mer-{s.id}"
+							onclick={() => toggle(s.id)}
+						>
+							{open ? $t.home.close : $t.home.readMore}
+							<Icon name={open ? 'up' : 'down'} />
+						</button>
+					</div>
+				</article>
+			{/each}
+		</div>
+	</div>
+</section>
+
+<!-- Slik jobber vi -->
+<section class="section" aria-labelledby="prosess-tittel">
+	<div class="container">
+		<div class="section-head">
+			<span class="eyebrow">{$t.home.processEyebrow}</span>
+			<h2 id="prosess-tittel" class="h2">{$t.home.processTitle}</h2>
+		</div>
+		<ol class="steps">
+			{#each $t.home.steps as step, i (i)}
+				<li>
+					<span class="step-num">{$t.home.step} {i + 1}</span>
+					<strong>{step.title}</strong>
+					<span>{step.text}</span>
+				</li>
+			{/each}
+		</ol>
+		<div class="platforms">
+			<span class="platforms-label">{$t.home.platformsLabel}</span>
+			<ul>
+				{#each platforms as name (name)}
+					<li>{name}</li>
+				{/each}
+			</ul>
+		</div>
+	</div>
+</section>
+
+<!-- Sitat -->
+<section class="container quote-wrap">
+	<p class="quote">{$t.home.quote}</p>
+</section>
+
+<ContactPeople />
 
 <style>
-    
+	/* Hero */
+	.hero {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr));
+		gap: clamp(32px, 5vw, 64px);
+		align-items: center;
+		padding-block: clamp(40px, 7vw, 80px) clamp(56px, 8vw, 96px);
+	}
 
+	.hero-text {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(20px, 2.4vw, 28px);
+	}
 
+	.hero-text .lead {
+		max-width: 520px;
+	}
 
-    /* Reduser størrelsen på hele seksjonen */
-    .container {
-        transform: scale(1.0); /* Skaler ned hele containeren til 90% av originalstørrelsen */
-        transform-origin: center; /* Sørg for at skaleringen skjer fra midten */        
-    }
+	.hero-img {
+		width: 100%;
+		height: clamp(260px, 36vw, 480px);
+		object-fit: cover;
+		border-radius: var(--radius-lg);
+	}
 
-    /* Style for the text container */
-    .text-container {
-        padding: 0px 50px;       /* 0px topp/bunn, 50px venstre/høyre */
-        background-color: #F2F2F2;
-    }
+	/* Løsninger */
+	.head-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: 24px;
+		flex-wrap: wrap;
+		margin-bottom: clamp(32px, 4vw, 48px);
+	}
 
-    .text-container2 {
-        padding: 0px 50px;       /* 0px topp/bunn, 50px venstre/høyre */
-        background-color: #ffffff;
-    }
+	.head-row .section-head {
+		margin-bottom: 0;
+	}
 
-    /* Style for the topbilde image */
-    /* Full width section */
-    .topbilde-section {
-        width: 100vw;
-        margin-left: calc(-50vw + 50%);
-    }
+	.head-lead {
+		max-width: 420px;
+		color: var(--fg-2);
+		font-size: 17px;
+	}
 
-    /* The always-blurred background layer */
-    .image-wrapper {
-        position: relative;
-        height: 100vh;          /* full-screen cinematic hero */
-        min-height: 560px;
-        width: 100%;            /* full width */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        overflow: hidden;
-        border-radius: 0;
+	/* Mobil: ett kort per rad. Nettbrett og PC: alle tre på én rad. */
+	.services {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 24px;
+	}
 
-        background-image: var(--bg);
-        background-size: cover;
-        background-repeat: no-repeat;
-    }
+	@media (min-width: 700px) {
+		.services {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 20px;
+		}
+	}
 
-    /* The always-blurred background layer */
-    .image-wrapper::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image: var(--bg);
-        background-size: cover;
-        background-position: 50% 90%; /* X Y */
-        filter: blur(2px) brightness(0.8) saturate(0.8);
-        background-color: rgba(255, 255, 255, 0.484);
-        background-blend-mode: multiply;
-        transform: scale(1.0);
-    }
+	.service {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
 
-    /* Cinematic dark gradient for text contrast */
-    .image-wrapper::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.20) 45%, rgba(0,0,0,0.60) 100%);
-    }
+	.service img {
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		height: auto;
+		object-fit: cover;
+		border-radius: var(--radius);
+		border: 1px solid var(--line);
+		background: var(--surface-2);
+	}
 
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: #fff;
-    }
+	.service-body {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
 
-    .hero-eyebrow {
-        margin: 0 0 1rem 0;
-        font-size: clamp(0.75rem, 1.4vw, 1rem);
-        letter-spacing: 0.42em;
-        text-transform: uppercase;
-        font-weight: 600;
-        opacity: 0.85;
-    }
+	.num {
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--fg-3);
+	}
 
-    .hero-title {
-        margin: 0;
-        font-size: clamp(3rem, 9vw, 7rem);
-        font-weight: 800;
-        line-height: 1.02;
-        letter-spacing: -0.02em;
-        text-shadow: 0 2px 30px rgba(0, 0, 0, 0.35);
-    }
+	.service-title {
+		font-size: 20px;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		line-height: 1.3;
+	}
 
-    .hero-title strong {
-        font-weight: 800;
-    }
+	.short {
+		font-size: 15px;
+		color: var(--fg-2);
+	}
 
-    .hero-subtitle {
-        margin: 1.5rem 0 0 0;
-        max-width: 640px;
-        font-size: clamp(1.05rem, 2vw, 1.4rem);
-        font-weight: 400;
-        line-height: 1.5;
-        opacity: 0.92;
-        text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
-    }
+	.more {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
 
-    .hero-actions {
-        margin-top: 2.5rem;
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+	.more p {
+		font-size: 16px;
+		line-height: 1.65;
+		color: var(--fg-2);
+		text-wrap: pretty;
+	}
 
-    .btn-pill {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 200px;
-        padding: 0.9rem 2rem;
-        border-radius: 999px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        text-decoration: none;
-        cursor: pointer;
-        -webkit-backdrop-filter: blur(6px);
-        backdrop-filter: blur(6px);
-        transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-    }
+	.more .btn-row {
+		margin-top: 4px;
+	}
 
-    .btn-pill-primary {
-        background: rgba(255, 255, 255, 0.92);
-        color: #111;
-    }
+	.toggle {
+		align-self: flex-start;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 44px;
+		padding: 8px 0;
+		border: 0;
+		background: none;
+		color: var(--accent);
+		font-size: 15px;
+		font-weight: 700;
+	}
 
-    .btn-pill-primary:hover {
-        background: #fff;
-        color: #111;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    }
+	.toggle:hover {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
 
-    .btn-pill-secondary {
-        background: rgba(30, 30, 30, 0.45);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-    }
+	/* Åpnet kort på bred skjerm: over hele bredden, bilde til venstre og tekst til høyre */
+	.service.wide-open {
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 48px;
+		align-items: start;
+		background: var(--bg);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		padding: clamp(20px, 3vw, 40px);
+	}
 
-    .btn-pill-secondary:hover {
-        background: rgba(30, 30, 30, 0.75);
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    }
+	.service.wide-open .service-title {
+		font-size: clamp(26px, 2.6vw, 34px);
+		line-height: 1.15;
+		letter-spacing: -0.025em;
+	}
 
-    .hero-scroll {
-        margin-top: 3rem;
-        width: 26px;
-        height: 42px;
-        border: 2px solid rgba(255, 255, 255, 0.6);
-        border-radius: 999px;
-        display: flex;
-        justify-content: center;
-        padding-top: 8px;
-    }
+	.service.wide-open .service-body {
+		gap: 16px;
+	}
 
-    .hero-scroll-dot {
-        width: 4px;
-        height: 8px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.9);
-        animation: hero-scroll-anim 1.6s ease-in-out infinite;
-    }
+	/* Slik jobber vi */
+	.steps {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+		gap: 24px;
+	}
 
-    @keyframes hero-scroll-anim {
-        0% { transform: translateY(0); opacity: 1; }
-        100% { transform: translateY(14px); opacity: 0; }
-    }
+	.steps li {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		border-top: 2px solid var(--fg);
+		padding-top: 18px;
+		font-size: 15px;
+		color: var(--fg-2);
+	}
 
-    /* Scroll reveal (added at runtime) */
-    :global(.reveal) {
-        opacity: 0;
-        transform: translateY(28px);
-        transition: opacity 0.7s ease, transform 0.7s ease;
-        will-change: opacity, transform;
-    }
+	.steps strong {
+		font-size: 19px;
+		color: var(--fg);
+	}
 
-    :global(.reveal-visible) {
-        opacity: 1;
-        transform: none;
-    }
+	.step-num {
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
 
-    @media (prefers-reduced-motion: reduce) {
-        :global(.reveal) {
-            opacity: 1;
-            transform: none;
-            transition: none;
-        }
-        .hero-scroll-dot {
-            animation: none;
-        }
-    }
+	.platforms {
+		margin-top: clamp(32px, 4vw, 48px);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		padding: clamp(20px, 3vw, 28px) clamp(20px, 3vw, 32px);
+	}
 
+	.platforms-label {
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--fg-3);
+	}
 
-    /* Text on top */
-    .image-text {
-        position: relative;
-        z-index: 1;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        color: rgb(255, 255, 255);
-        text-align: center;
-    }
+	.platforms ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
 
-    .image-text2{
-        position: absolute;
-        top: 80px;
-        left: 50px;
-        z-index: 2;
+	.platforms li {
+		padding: 9px 16px;
+		border-radius: 999px;
+		background: var(--surface-2);
+		font-weight: 700;
+		font-size: 15px;
+	}
 
-        background-color: #DAF2D0;
-        padding: 10px;
-        border-radius: 6px;
+	/* Sitat */
+	.quote-wrap {
+		padding-block: clamp(24px, 4vw, 48px) clamp(64px, 9vw, 112px);
+	}
 
-        /* 👇 important */
-        max-width: min(800px, 90vw); /* never wider than screen */
-        box-sizing: border-box;
-        word-wrap: break-word;
-    }
-
-    .image-text2 h2{
-        margin: 0 0 6px 0;
-        font-size: clamp(28px, 3vw, 38px); /* scales down */
-        line-height: 1.15;
-    }
-
-    .image-text2 p{
-        margin: 0;
-        font-size: clamp(20px, 1.6vw, 24px); /* scales down */
-        line-height: 1.3;
-    }
-
-    .image-text3 {
-        position: absolute;
-        bottom: 40px;      /* distance from bottom */
-        right: 40px;       /* distance from right */
-        z-index: 2;
-
-        color: rgb(0, 0, 0);
-        text-align: left;
-
-        /* Rectangle */
-        /*background-color: #CAEDFB;*/
-        padding: 0px;
-        border-radius: 6px;
-
-        /* 👇 important */
-        max-width: min(520px, 90vw); /* never wider than screen */
-        box-sizing: border-box;
-        word-wrap: break-word;
-    }
-
-    /* Label color */
-    .image-text3 .label {
-        /*font-size: 2.0rem;*/
-        font-size: clamp(40px, 3vw, 38px); /* scales down */
-        color: #000000;
-        font-weight: 400;
-    }
-
-    /* Value colors */
-    .image-text3 .value {
-        /*font-size: 1.6rem;*/
-        font-size: clamp(30px, 1.6vw, 40px); /* scales down */
-        color: #08bf20;
-        font-weight: 600;
-    }
-
-    /* Style for the robot image */
-    .robot-image {
-        width: 100%;               /* Ensure the image fills the width of the frame */
-        height: 100%;              /* Maintain aspect ratio */
-        max-height: 100%;          /* Optional: Set a maximum height */
-        /* object-fit: contain;*/         /* Ensure the image covers the frame without distortion */
-        object-fit: cover;         /* Ensure the image covers the frame without distortion */        
-        margin: 0;                 /* Remove any default margin */
-        display: block;            /* Ensure the image behaves as a block element */
-        border-radius: 0px;       /* 👈 rounded corners */
-    }
-
-    /* Style for the automation image */
-    .automation-image {
-        width: 100%;               /* Ensure the image fills the width of the frame */
-        height: 100%;              /* Maintain aspect ratio */
-        max-height: 100%;          /* Optional: Set a maximum height */
-        object-fit: cover;         /* Ensure the image covers the frame without distortion */
-        object-position: left center;
-        margin: 0;                 /* Remove any default margin */
-        display: block;            /* Ensure the image behaves as a block element */
-        border-radius: 0px;       /* 👈 rounded corners */
-    }
-
-    /* Style for the iot image */
-    .iot-image {
-        width: 100%;               /* Ensure the image fills the width of the frame */
-        height: 100%;              /* Maintain aspect ratio */
-        max-height: 100%;          /* Optional: Set a maximum height */
-        object-fit: cover;         /* Ensure the image covers the frame without distortion */
-        margin: 0;                 /* Remove any default margin */
-        display: block;            /* Ensure the image behaves as a block element */
-        border-radius: 0px;       /* 👈 rounded corners */
-    }
-
-    /* Style for the konsulent image */
-    .konsulent-image {
-        width: 100%;               /* Ensure the image fills the width of the frame */
-        height: 100%;              /* Maintain aspect ratio */
-        max-height: 100%;          /* Optional: Set a maximum height */
-        object-fit: cover;         /* Ensure the image covers the frame without distortion */
-        object-position: left center;
-        margin: 0;                 /* Remove any default margin */
-        display: block;            /* Ensure the image behaves as a block element */
-        border-radius: 0px;       /* 👈 rounded corners */
-    }
-
-    .cookie-banner {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: #111;
-        color: white;
-        padding: 1rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .cookie-banner button {
-        background: #0d6efd;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-
-    /*
-    iPhone 13 mini har bredde på 375px
-    */
-    @media (max-width: 375px) 
-    {
-         #logo-icon {
-        max-width: 120px;
-        max-height: 40px;        
-    }
-    }
-
-    /*
-    iPhone 14 har bredde på 390px
-    */
-    @media (max-width: 390px) 
-    {
-          
-    }    
-    
-    /*
-    PCen har minste bredde på 500px
-    */
-    @media (max-width: 500px) 
-    {
-        .order-1 {
-            order: 1; /* Teksten vises først */
-        }
-        .order-2 {
-            order: 2; /* Bildet vises etter teksten */
-        }
-        .image-wrapper {            
-            height: 400px;          /* set your height */            
-        }
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 576px) 
-    {  
-        .image-wrapper {            
-            height: 450px;          /* set your height */            
-        }    
-    }    
-
-
-    /* Responsive adjustments */
-    @media (max-width: 1024px) 
-    {
-        .image-wrapper {            
-            height: 600px;          /* set your height */            
-        }        
-    }
-
-    /*
-    //iPhone 13 mini har bredde på 1080px når den er i landskapsmodus (90 grader)
-    */
-    @media (max-width: 1080px) 
-    {
-        
-    }
-
-
+	.quote {
+		font-size: clamp(28px, 3.6vw, 48px);
+		line-height: 1.18;
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		max-width: 960px;
+		text-wrap: balance;
+	}
 </style>
-
-
-
-{#if show}
-    <div class="cookie-banner">
-        <p>
-            {$t.home.cookie}
-        </p>
-        <button on:click={acceptCookies}>{$t.home.accept}</button>
-    </div>
-{/if}
-
-
-<main>
-
-    
-    <div class="topbilde-section">
-        {#each topbildes as topbilde (topbilde.id)}
-            {#if topbilde.id === 1}
-                <div class="image-wrapper" style={`--bg: url('${topbilde.image}');`}>
-                    <div class="hero-content">
-                        <p class="hero-eyebrow">OPTIRAM</p>
-                        <h1 class="hero-title">
-                            <strong style="color: #FFFFFF; transition: color 0.5s ease;">{current}</strong>
-                        </h1>
-                        <p class="hero-subtitle">
-                            {$t.home.heroSubtitle}
-                        </p>
-                        <div class="hero-actions">
-                            <a href="#losninger" class="btn-pill btn-pill-primary">{$t.home.solutions}</a>
-                            <a href="/about" class="btn-pill btn-pill-secondary">{$t.home.aboutBtn}</a>
-                        </div>
-                        <div class="hero-scroll" aria-hidden="true">
-                            <span class="hero-scroll-dot"></span>
-                        </div>
-                    </div>
-                </div>
-            {/if}
-        {/each}
-    </div>
-    
-
-     
-    <div class="container-fluid p-5 text-black text-center">        
-            <br>
-            <h1><strong>{$t.home.welcomeTitle}</strong></h1>
-            <p>{$t.home.welcomeSubtitle}</p>                    
-    </div>
-    
-    <br>
-
-       
-    <div id="losninger" class="container mt-5 d-flex justify-content-center align-items-center ">
-        <div class="row g-0 align-items-stretch">
-            <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center text-container2">
-                <h3><strong>{$t.home.robotikk.title}</strong></h3>
-                <p>{@html $t.home.robotikk.body}</p>
-                <br>
-            </div>
-            <div class="col-lg-6 order-sm-2 order-1 d-flex flex-column justify-content-center align-items-center">
-                {#each robots as robot (robot.id)}
-                    {#if (robot.id === 1)}
-                        <img src="{robot.image}" class="robot-image">
-                    {/if}
-                {/each}
-            </div>
-        </div>
-    </div>
-    
-    <br>
-    <br>
-    <br>
-    <br>
-
-
-    
-     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
-        <div class="row g-0 align-items-stretch">
-            <!-- Bildet -->
-            <div class="col-lg-6 order-lg-1 order-2 d-flex flex-column justify-content-center align-items-center">
-                {#each automations as automation (automation.id)}
-                    {#if (automation.id === 1)}
-                        <img src="{automation.image}" class="automation-image">
-                    {/if}
-                {/each}
-            </div>
-            <!-- Teksten -->
-            <div class="col-lg-6 order-lg-2 order-1 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3><strong>{$t.home.automation.title}</strong></h3>
-                <p>{@html $t.home.automation.body}</p>
-                <br>
-            </div>
-        </div>
-    </div>
-
-    <br>
-    <br>
-    <br>
-    <br>
-
-    
-     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
-        <div class="row g-0 align-items-stretch">
-            <div class="col-lg-6 d-flex flex-column justify-content-start align-items-center text-container2">
-                <h3><strong>{$t.home.programmering.title}</strong></h3>
-                <p>{@html $t.home.programmering.body}</p>
-                <br>
-            </div>
-            <div class="col-lg-6 d-flex flex-column justify-content-center align-items-center">
-                {#each konsulents as konsulent (konsulent.id)}
-                    {#if (konsulent.id === 1)}
-                        <img src="{konsulent.image}" class="konsulent-image">
-                    {/if}
-                {/each}
-            </div>
-        </div>
-    </div>
-
-    <br>
-    <br>
-    <br>
-    <br>
-
-    
-     <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
-        <div class="row g-0 align-items-stretch">
-            <!-- Bildet -->        
-            <div class="col-lg-6 order-lg-1 order-2 d-flex flex-column justify-content-center align-items-center">
-                {#each iots as iot (iot.id)}
-                    {#if (iot.id === 1)}
-                        <img src="{iot.image}" class="iot-image">
-                    {/if}
-                {/each}
-            </div>
-            <!-- Teksten -->
-            <div class="col-lg-6 order-lg-2 order-1 d-flex flex-column justify-content-center align-items-center text-container">
-                <h3><strong>{$t.home.opticloud.title}</strong></h3>
-                <p>{@html $t.home.opticloud.body}</p> 
-                <br>
-            </div>
-        </div>
-    </div>
-
-
-
-    <br>
-    <br>
-    <br>
-    <br>
-
-</main>

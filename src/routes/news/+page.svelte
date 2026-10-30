@@ -1,223 +1,269 @@
 <script>
-    import { t } from '$lib/i18n';
+	import { t } from '$lib/i18n';
+	import { newsImages } from '$lib/site';
+	import Icon from '$lib/components/Icon.svelte';
 
-    let optirambildes = [                      
-        { id: 1, image: '/Black logo.png' }    
-    ];   
-
-    let kameleonrobotics = [                      
-        { id: 1, image: '/kameleonrobots.svg' }    
-    ]; 
-
-    let i4factorys = [                      
-        { id: 1, image: '/i4FACTORY.png' }    
-    ]; 
-
+	const featured = $derived($t.news.items[0]);
+	const rest = $derived($t.news.items.slice(1));
 </script>
 
+<svelte:head>
+	<title>{$t.meta.newsTitle}</title>
+	<meta name="description" content={$t.meta.newsDescription} />
+</svelte:head>
+
+{#snippet media(/** @type {string} */ id, /** @type {string} */ cls)}
+	{@const m = newsImages[id]}
+	{#if m.kind === 'photo'}
+		<img class="{cls} photo" src={m.src} alt="" style:object-position={m.pos} loading="lazy" />
+	{:else}
+		<div class="{cls} logo-tile tone-{m.tone}">
+			{#if m.src === 'optiram'}
+				<img src={m.tone === 'dark' ? '/White logo.png' : '/Black logo.png'} alt="" class="logo-img" />
+			{:else}
+				<img src={m.src} alt="" class="logo-img" />
+			{/if}
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet meta(/** @type {{ tag: string, date: string }} */ item)}
+	<div class="meta">
+		<span class="tag">{$t.news.tags[/** @type {'hire' | 'partner' | 'company'} */ (item.tag)]}</span>
+		{#if item.date}<span class="date">{item.date}</span>{/if}
+	</div>
+{/snippet}
+
+<div class="container page">
+	<header class="page-head">
+		<span class="eyebrow">{$t.news.eyebrow}</span>
+		<h1 class="h1">{$t.news.title}</h1>
+	</header>
+
+	<article class="featured">
+		{@render media(featured.id, 'featured-media')}
+		<div class="featured-body">
+			{@render meta(featured)}
+			<h2 class="featured-title">{featured.title}</h2>
+			<p>{featured.text}</p>
+		</div>
+	</article>
+
+	<div class="grid">
+		{#each rest as item (item.id)}
+			<article class="card">
+				{@render media(item.id, 'card-media')}
+				<div class="card-body">
+					{@render meta(item)}
+					<h3>{item.title}</h3>
+					<p>{item.text}</p>
+					{#if item.link}
+						<a class="ext" href={item.link.href} target="_blank" rel="noopener noreferrer"
+							>{item.link.label} <Icon name="external" size={14} /></a
+						>
+					{/if}
+				</div>
+			</article>
+		{/each}
+	</div>
+</div>
 
 <style>
+	.page {
+		display: flex;
+		flex-direction: column;
+		gap: clamp(28px, 5vw, 56px);
+		padding-block: clamp(40px, 7vw, 88px) clamp(64px, 9vw, 112px);
+	}
 
-    /* Style for the text container */
-    .text-container {        
-        padding: 0;
-    }
+	.page-head {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
 
-    /* Ensure both sections have the same height and appearance */
-    .frame4 {
-        background-color: #daebf239;    /* Optional: Add a background color */        
-        padding: 0px;          /* space INSIDE the frame */
-        margin: 0px;          /* 👈 space AROUND the frame */
-        display: flex;                  /* Use flexbox for alignment */
-        flex-direction: column;         /* Stack content vertically */
-        justify-content: center;        /* Center content vertically */
-        align-items: center;            /* Center content horizontally */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.0); /* Optional: Add a shadow for a frame effect */
-        height: auto;                   /* Allow the height to adjust dynamically */
-        border-radius: 12px;            /* 👈 avrunda hjørne */
-    }
+	.meta {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		flex-wrap: wrap;
+	}
 
-    .frame4-card {
-        background-color: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 16px;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
+	.date {
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--fg-3);
+	}
 
-    .frame4-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
-    }
+	/* Hovedsak */
+	.featured {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+	}
 
-    /* Text area grows so every card matches height */
-    .frame4-card p {
-        margin: 0;
-        padding: 20px 22px 24px;
-        width: 100%;
-        flex: 1 1 auto;
-        text-align: left;
-        font-size: 0.98rem;
-        line-height: 1.55;
-    }
+	:global(.featured-media) {
+		width: 100%;
+		height: 100%;
+		min-height: 300px;
+		max-height: 460px;
+		object-fit: cover;
+	}
 
-    .frame4-card a {
-        word-break: break-word;
-    }
+	.featured-body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 18px;
+		padding: clamp(24px, 4vw, 56px);
+	}
 
-    /* Ensure both sections have the same height and appearance */
-    .frame5 {
-        background-color: transparent;
-        border: none;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        height: auto;
-    }
+	.featured-title {
+		font-size: clamp(26px, 3vw, 38px);
+		line-height: 1.12;
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		text-wrap: balance;
+	}
 
-    /* Logo area inside the card – fixed height so all cards align */
-    .nyhetbilde-image{
-        width: 100%;
-        height: 170px;
-        object-fit: contain;
-        padding: 26px;
-        background-color: #f7f9fb;
-        display: block;
-        box-sizing: border-box;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
+	.featured-body p {
+		font-size: 17px;
+		color: var(--fg-2);
+	}
 
+	/* Øvrige saker */
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+		gap: 24px;
+	}
 
-    @media (max-width: 992px) {
-        .nyhetbilde-image {
-            height: 160px;
-        }
-    }
+	.card {
+		display: flex;
+		flex-direction: column;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		overflow: hidden;
+	}
 
-    @media (max-width: 576px) {
-        .nyhetbilde-image {
-            height: 150px;
-        }
-    }
+	:global(.card-media) {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
 
-    
+	.card-body {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 24px;
+	}
 
+	.card h3 {
+		font-size: 20px;
+		line-height: 1.25;
+		font-weight: 700;
+	}
 
+	.card p {
+		font-size: 15px;
+		color: var(--fg-2);
+	}
 
+	.ext {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		align-self: flex-start;
+		min-height: 32px;
+		font-size: 15px;
+		font-weight: 700;
+		color: var(--accent);
+	}
+
+	/* Logo-flater */
+	.logo-tile {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.tone-light {
+		background: #f3f3f2;
+	}
+
+	.tone-dark {
+		background: #16181c;
+	}
+
+	.tone-accent {
+		background: #eef2fd;
+	}
+
+	.logo-img {
+		width: 58%;
+		max-width: 320px;
+		height: auto;
+		mix-blend-mode: multiply;
+	}
+
+	.tone-dark .logo-img {
+		width: 46%;
+		mix-blend-mode: normal;
+	}
+
+	.tone-accent .logo-img {
+		width: 46%;
+	}
+
+	@media (max-width: 600px) {
+		.grid {
+			gap: 16px;
+		}
+
+		.card {
+			flex-direction: row;
+			border-radius: var(--radius);
+		}
+
+		:global(.card-media) {
+			width: 96px;
+			min-height: 96px;
+			aspect-ratio: auto;
+			flex-shrink: 0;
+			align-self: stretch;
+		}
+
+		.logo-img {
+			width: 80%;
+		}
+
+		.tone-dark .logo-img,
+		.tone-accent .logo-img {
+			width: 76%;
+		}
+
+		.card-body {
+			padding: 16px;
+			gap: 6px;
+			min-width: 0;
+		}
+
+		.card h3 {
+			font-size: 17px;
+		}
+
+		.card p {
+			font-size: 14px;
+		}
+
+		:global(.featured-media) {
+			min-height: 240px;
+			aspect-ratio: 4 / 3;
+		}
+	}
 </style>
-
-
-<main>
-    <br>
-    <br>
-    <br>
-    <div class="container mt-4">
-        <div class="row justify-content-center align-items-lef">
-            <div class="col-sm-12 d-flex flex-column justify-content-center align-items-left">
-                <h3>{$t.news.title}</h3>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="container mt-5 d-flex justify-content-center align-items-center width-100">
-        <div class="row g-4">
-            <!-- Text Section 0 -->
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={optirambildes.find(i => i.id === 1)?.image}
-                         class="nyhetbilde-image">
-                    <p>{@html $t.news.torbjorn}</p>
-                </div>
-            </div>
-
-            <!-- Text Section 1 --> 
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={kameleonrobotics.find(i => i.id === 1)?.image}
-                         class="nyhetbilde-image">                    
-                    <p>{@html $t.news.kameleon}</p>            
-               </div>
-            </div>
-            
-
-            <!-- Text Section 2 -->
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={optirambildes.find(i => i.id === 1)?.image}
-                         class="nyhetbilde-image">                    
-                    <p>{@html $t.news.stian}</p> 
-                </div>
-            </div>
-            
-            <!-- Text Section 3 -->
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-                <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={optirambildes.find(i => i.id === 1)?.image}
-                         class="nyhetbilde-image">                     
-                    <p>{@html $t.news.lokaler}</p>
-                </div>
-            </div>
-
-
-             <!-- Text Section 4 -->
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-               <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={i4factorys.find(i => i.id === 1)?.image}
-                         class="nyhetbilde-image">                    
-                    <p>{@html $t.news.i4factory}</p> 
-               </div>
-            </div>
-
-            <!-- Text Section 5 -->
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-               <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={optirambildes.find(i => i.id === 1)?.image}
-                        class="nyhetbilde-image">                    
-                    <p>{@html $t.news.sveinung}</p> 
-               </div>
-            </div>
-
-            <!-- Text Section 6 -->
-            <div class="col-12 col-md-6 col-xl-3 p-3 d-flex flex-column justify-content-start align-items-center text-container frame5">
-               <div class="frame4-card h-100 d-flex flex-column justify-content-start align-items-center">
-                    <!-- Image -->
-                    <img src={optirambildes.find(i => i.id === 1)?.image}
-                         class="nyhetbilde-image">                    
-                    <p>{@html $t.news.eiere}</p> 
-               </div>
-            </div>
-            
-            
-
-        </div>
-    </div>
-
-
-
-
-
-
-
-
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-
-</main>
